@@ -2,7 +2,6 @@
 require 'DB/db_con.php';
 session_start();
 
-// Fetch orders based on order ID if provided
 if(isset($_GET['order_id'])) {
     $order_id = $_GET['order_id'];
     try {
@@ -23,30 +22,7 @@ if(isset($_GET['order_id'])) {
         die("Error: " . $e->getMessage());
     }
 }
-// Fetch orders based on status if provided
-elseif(isset($_GET['status'])) {
-    $status = $_GET['status'];
-    try {
-        $sql = "SELECT *
-        FROM orders
-        INNER JOIN orders_details ON orders.order_id = orders_details.order_id
-        INNER JOIN products ON orders_details.product_id = products.product_id
-        INNER JOIN users ON orders.user_id = users.user_id
-        WHERE orders_details.order_status = :status";
-
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':status', $status);
-        $stmt->execute();
-        $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        die("PDOException: " . $e->getMessage());
-    } catch (Exception $e) {
-        die("Error: " . $e->getMessage());
-    }
-}
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -55,43 +31,11 @@ elseif(isset($_GET['status'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display+swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://kit.fontawesome.com/a1e3091ba9.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../scss/style.scss">
+    <link rel="stylesheet" href="./scss/style.scss">
+</head>
 <style>
-    body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-.navbar{
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    border: 5px solid red;
-}
-nav{
-    flex: 1;
-    text-align: center;
-}
-nav ul{
-    display: inline-block;
-    list-style-type: none;
-    
-}
-nav ul li{
-    display: inline-block;
-    margin-right: 20px;
-    font-size: bold;
-}
-a{
-    text-decoration: none;
-    color: #000000;
-    font-weight: bold;
-}
+ 
 .status {
     flex: 1;
     text-align: center;
@@ -138,154 +82,184 @@ button {
     cursor: pointer;
     font-weight: bold;
 }
-.footer {
-    border: 5px solid #000000;
-    margin-top: auto;
-}  
-.footer-col-1 img {
-    width: 180px;
-    bottom: 20px;
+.order-container {
+    min-height: calc(100% - 256px);
 }
-.footer-col-2{
-    text-align: center;
-    font-weight: bold;
-}
-.row {
-    display: flex; 
-    justify-content: space-evenly;
-    margin-top: 10px;
-}
-.menu-icon{
-    width: 30px;
-    margin-left: 20px;
-    display: none;
-}
-/*--media qyuery for menu---*/
+.order-container{
+    .container{
+      max-width: 100%;
+      height: max-content;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      top: 10%;
+      right: 0%;
+      width: 100%;
+      height: 100%;
+      margin: 0 auto;
+      .ebadge-wrapper{
+        margin-top: 100px;
+        .row1{
+          flex-grow: 1;
+          display: flex;
+          align-items: center;
+          gap: 5rem;
+          
+          .small-box-1 {
+            background: #81d381;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            margin-bottom: 20px;
+            &:nth-child(1) {
+              background-color: rgb(76, 245, 61);
+            }
+            &:nth-child(2) {
+              background-color: rgb(20, 122, 239);
+            }
+            &:nth-child(3) {
+              background-color: rgb(233, 236, 31);
+            }
+            .badge{
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 20px;
+              margin-bottom: 20px;
+              .inner{
+                text-align: center;
+                h3{
+                  font-size: 36px;
+                  margin: 0;
+                  color: #333;
+                }
+                p{
+                  margin: 0px;
+                  color: black;
+                }
+              }
+              .icon {
+                font-size: 48px;
+                color: black;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
-@media only screen and (max-width: 800px){
-    nav ul{
-        position: absolute;
-        top: 70px;
-        left: 0;
-        background: #e4b8b8;
-        width: 100%;
-        overflow: hidden;
-        transition: max-height 0.5s;
-    }
-    nav ul li{
-        display: block;
-        margin-right: 50px;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-    nav ul li a{
-        color: #000000;
-        font-weight: bold;
-    }
-    .menu-icon{
-        display: block;
-        cursor: pointer;
-    }
-}
-.btn-close {
-        display: inline-flex;
-        align-items: center;
-        padding: 8px 12px;
-        border-radius: 4px;
-        text-decoration: none;
-        margin-left: 206px;
-    }
-    .btn-close:hover {
-        background-color: crimson;
-    }
-    .btn-close {
-        background-color: #e4b8b8;
-        padding: 2px 10px;
-    }
 </style>
-</head>
 <body>
-<div class="header">
-    <div class="container">
+
+    <div class="staff-container">
         <div class="navbar">
-        <div class="logo">
-          <img src="images/Logo.png" class= "pic" width="125">
-        </div>
-            <nav>
-            <ul id="MenuItems">
-                <li><a href="">Dashboards</a></li>
-                <li><a href="">Manage Orders</a></li>
-                <li><a href="">Products</a></li>
-            </ul>
+            <div class="logo">
+            <img src="images/Logo.png" class= "pic" width="125">
+            </div>
+            <nav id="menuItems">
+                <ul>
+                    <li><a href="staff_dash.php">Dashboards</a></li>
+                    <!-- <li><a href="staff_view_order.php">Manage Orders</a></li> -->
+                    <li><a href="">Products</a></li>
+                </ul>
             </nav>
-            <a href="http://localhost/E-commerce/Account.php">
-            <img src="images/profile-icon.png" width="30px" height="30px" class="icon">
-            </a>
-            <img src="images/menu.png" class="menu-icon" onclick="menutoggle()">
+            <div class="setting-sec">
+                <a href="http://localhost/E-commerce/Account.php">
+                <i class="fa-solid fa-user"></i>
+                </a>
+                <img src="images/menu.png" class="menu-icon" onclick="menutoggle()">
+            </div>
         </div>
     </div>
-</div>
 
-<div class="container">
+
+<div class="order-container">
 <?php if (!empty($orders)) : ?>
         <h2 style="text-align: center;">Order ID: <?php echo $orders[0]['order_id']; ?> - Customer: <?php echo $orders[0]['first_name'] . ' ' . $orders[0]['last_name']; ?></h2>
     <?php endif; ?>
-    <div class="status">
-    <?php if (isset($_GET['order_id'])) : ?>
-        <a href="staff_view_order.php?order_id=<?php echo $order_id; ?>&status=Pending">Pending</a> |
-        <a href="staff_view_order.php?order_id=<?php echo $order_id; ?>&status=To%20Ship">To Ship</a> |
-        <a href="staff_view_order.php?order_id=<?php echo $order_id; ?>&status=To%20Receive">To Receive</a> |
-        <a href="staff_view_order.php?order_id=<?php echo $order_id; ?>&status=Completed">Completed</a>
-    <?php else : ?>
-        <a href="staff_view_order.php?status=Pending">Pending</a> |
-        <a href="staff_view_order.php?status=To%20Ship">To Ship</a> |
-        <a href="staff_view_order.php?status=To%20Receive">To Receive</a> |
-        <a href="staff_view_order.php?status=Completed">Completed</a>
-    <?php endif; ?>
-</div>
 
+    <!-- <div class="status">
+        <?php if (isset($_GET['order_id'])) : ?>
+            <a href="staff_view_order.php?order_id=<?php echo $order_id; ?>&status=Pending" <?php echo ($_GET['status'] ?? '') === 'Pending' ? 'class="selected"' : ''; ?>>Pending</a> |
+            <a href="staff_view_order.php?order_id=<?php echo $order_id; ?>&status=ToShip" <?php echo ($_GET['status'] ?? '') === 'ToShip' ? 'class="selected"' : ''; ?>>To Ship</a> |
+            <a href="staff_view_order.php?order_id=<?php echo $order_id; ?>&status=ToReceive" <?php echo ($_GET['status'] ?? '') === 'ToReceive' ? 'class="selected"' : ''; ?>>To Receive</a> |
+            <a href="staff_view_order.php?order_id=<?php echo $order_id; ?>&status=Completed" <?php echo ($_GET['status'] ?? '') === 'Completed' ? 'class="selected"' : ''; ?>>Completed</a>
+        
+        <?php else : ?>
+            <a href="staff_view_order.php?status=Pending">Pending</a> |
+            <a href="staff_view_order.php?status=ToShip">To Ship</a> |
+            <a href="staff_view_order.php?status=ToReceive">To Receive</a> |
+            <a href="staff_view_order.php?status=Completed">Completed</a>
+        <?php endif; ?>
+    </div> -->
 
+    
     <?php if (empty($orders)) : ?>
         <p style="text-align: center; margin-top: 20px;">No orders found for the selected status.</p>
     <?php else : ?>
-        <a href="http://localhost/E-commerce/staff_dash.php"  class="btn-close" ><i class="fa fa-close"></i> Close</a>
-        <table>
+              
+    <table>
+        <tr>
+            <th>Product Name</th>
+            <th>Name</th>
+            <th>Date Ordered</th>
+            <th>Total Price</th>
+            <th>Status</th>
+            <th>Date Receive</th>
+            <th>Action</th>
+        </tr>
+        <?php foreach ($orders as $order) : ?>
             <tr>
-                <th>Product Name</th>
-                <th>Name</th>
-                <th>Date Ordered</th>
-                <th>Total Price</th>
-                <th>Status</th>
-                <th>Date Received</th>
-                <th>Action</th>
-            </tr>
-            <?php foreach ($orders as $order) : ?>
-                <tr>
-                    <td><?php echo $order['prod_name']; ?></td>
-                    <td><?php echo $order['first_name'] . ' ' . $order['last_name']; ?></td>
-                    <td><?php echo $order['date_ordered']; ?></td>
-                    <td><?php echo $order['price']; ?></td>
-                    <td><?php echo $order['order_status']; ?></td>
-                    <td><?php echo $order['order_status'] == 'Completed' ? ($order['date_received'] ?? 'Not received yet') : 'Not received yet'; ?></td>
+                <td><?php echo $order['prod_name']; ?></td>
+                <td><?php echo $order['first_name'] . ' ' . $order['last_name']; ?></td>
+                <td><?php echo $order['date_ordered']; ?></td>
+                <td><?php echo $order['total_price']; ?></td>
+                <td><?php echo $order['order_status']; ?></td>
+                <!-- <td><?php echo $order['order_status'] == 'Completed' ? ($order['date_received'] ?? 'Not received yet') : ''; ?></td> -->
+                <td><?php echo $order['order_status'] == 'Completed' ? ($order['date_received'] ?? 'Not received yet') : 'Not received yet'; ?></td>
 
-                    <td>
-                        <form action="update_order.php" method="POST">
-                            <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>" >
-                            <input type="hidden" name="product_id" value="<?php echo $order['product_id']; ?>">
-                            <select name="status"> <!-- Ensure name is 'status' -->
-                                <option value="Pending" <?php if ($order['order_status'] == 'Pending') echo 'selected'; ?>>Pending</option>
-                                <option value="To Ship" <?php if ($order['order_status'] == 'To Ship') echo 'selected'; ?>>To Ship</option>
-                                <option value="To Receive" <?php if ($order['order_status'] == 'To Receive') echo 'selected'; ?>>To Receive</option>
-                                <option value="Completed" <?php if ($order['order_status'] == 'Completed') echo 'selected'; ?>>Completed</option>
-                            </select>
-                            <button type="submit" name="update_order">Update</button>
-                        </form>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
-        <?php endif; ?>
+        <td>
+            <form action="update_order.php" method="POST">
+                    <input type="hidden" name="user_id" value="<?php echo $order['user_id']; ?>">
+                    <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
+                    <select name="status">
+                        <option value="Pending" <?php if ($order['order_status'] == 'Pending') echo 'selected'; ?>>Pending</option>
+                        <option value="ToShip" <?php if ($order['order_status'] == 'ToShip') echo 'selected'; ?>>To Ship</option>
+                        <option value="ToReceive" <?php if ($order['order_status'] == 'ToReceive') echo 'selected'; ?>>To Receive</option>
+                        <option value="Completed" <?php if ($order['order_status'] == 'Completed') echo 'selected'; ?>>Completed</option>
+                    </select>
+
+                    <button type="submit" name="update_order">Update</button>
+                </form>
+            </td>
+        </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+
+    <?php endif; ?>
 </div>
-<!-- Footer section remains unchanged -->
-</body>
+<!--footer-->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="footer-col-1">
+            <img src="images/logo2.png" width="100px" height="60px">
+            </div>
+            <div class="footer-col-2">
+            <p>&copy; <?php echo date('Y'); ?> 4M Minimart Online Store. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- js for toggle menu -->
+<script>
+var menuItems = document.getElementById("menuItems");
+    function menutoggle() {
+        menuItems.classList.toggle("show");
+    }
+    
+</script>
 </html>
+</body>

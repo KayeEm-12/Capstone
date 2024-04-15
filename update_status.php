@@ -1,4 +1,3 @@
-
 <?php foreach ($orders as $order): ?>
     <div>
         <p>Order ID: <?php echo $order['order_id']; ?></p>

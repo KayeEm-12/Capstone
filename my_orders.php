@@ -47,7 +47,9 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://kit.fontawesome.com/a1e3091ba9.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="./scss/style.scss">
-    
+    <style>
+
+    </style>
 </head>
 <body>
     <div class="navbar">
@@ -120,11 +122,13 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="order-details">
                 <div class="stats">
                     <div class="status">
-                        <a class="<?php echo ($status == 'pending') ? 'active' : ''; ?>" href="my_orders.php?status=pending">Pending</a> |
-                        <a class="<?php echo ($status == 'to_ship') ? 'active' : ''; ?>" href="my_orders.php?status=to_ship">To Ship</a> |
-                        <a class="<?php echo ($status == 'to_receive') ? 'active' : ''; ?>" href="my_orders.php?status=to_receive">To Receive</a> |
-                        <a class="<?php echo ($status == 'completed') ? 'active' : ''; ?>"href="my_orders.php?status=completed">Completed</a>
+                    <a class="<?php echo ($status == 'pending') ? 'active' : ''; ?>" href="my_orders.php?status=pending">Pending</a> |
+                    <a class="<?php echo ($status == 'toship') ? 'active' : ''; ?>" href="my_orders.php?status=toship">To Ship</a> |
+                    <a class="<?php echo ($status == 'toreceive') ? 'active' : ''; ?>" href="my_orders.php?status=toreceive">To Receive</a> |
+                    <a class="<?php echo ($status == 'completed') ? 'active' : ''; ?>" href="my_orders.php?status=completed">Completed</a>
+
                     </div>
+
                 </div>
                 <?php if (empty($orders)) : ?>
                         <div> <p style="display: flex; justify-content: center;  margin-top: 20px; font-weight: bold;">No orders found for the selected status.</p></div>
@@ -207,6 +211,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
         //         MenuItems.style.maxHeight = "0px";
         //     }
         // }
+        
     </script>
 </body>
 </html>

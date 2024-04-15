@@ -7,7 +7,6 @@ try {
     INNER JOIN users u ON o.user_id = u.user_id
     INNER JOIN address a ON o.address_id = a.address_id";
     
-
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -27,13 +26,14 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display+swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/a1e3091ba9.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="./scss/style.scss">
 </head>
 <style>
-    .order-container{
-        min-height:60vh;
-    }
+.order-container{
+    min-height:60vh;
+}
 .status {
     flex: 1;
     text-align: center;
@@ -154,8 +154,8 @@ button {
             </div>
             <nav id="menuItems">
                 <ul>
-                    <li><a href="">Dashboards</a></li>
-                    <li><a href="">Manage Orders</a></li>
+                    <li><a href="staff_dash.php">Dashboards</a></li>
+                    <!-- <li><a href="staff_view_order.php">View Orders</a></li> -->
                     <li><a href="">Products</a></li>
                 </ul>
                 </nav>
@@ -203,14 +203,14 @@ button {
                     </div>
 
                     <!-- To Received -->
-                    <div class="small-box-1" data-status="ToReceived">
+                    <div class="small-box-1" data-status="ToReceive">
                         <div class="badge">
                             <div class="icon">
                                 <i class="fa-solid fa-users-slash"></i>
                             </div>
                             <div class="inner">
-                                <h3 class="toReceived-orders-count">0</h3>
-                                <p>To Received Orders</p>
+                                <h3 class="toReceive-orders-count">0</h3>
+                                <p>To Receive Orders</p>
                             </div>
                         </div>
                         <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
@@ -257,7 +257,7 @@ button {
                             </td>
                             <td><?php echo $order['order_status']; ?></td>
                             <td>
-                                <button class="view-button" data-id="<?php echo $order['order_id']; ?>">View</button>
+                                <a href="staff_view_order.php?order_id=<?php echo $order['order_id']; ?>"><button class="view-button" data-id="<?php echo $order['order_id']; ?>">View</button></a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -276,7 +276,7 @@ button {
             </div>
         </div>
     </div>
-    </footer>
+</footer>
 <!-- js for toggle menu -->
 <script>
 
@@ -284,25 +284,13 @@ var menuItems = document.getElementById("menuItems");
     function menutoggle() {
         menuItems.classList.toggle("show");
     }
-    // MenuItems.style.maxHeight = "0px";
-    // function menutoggle() {
-    //     if (menuItems.style.maxHeight =="0px")
-    //     {
-    //         menuItems.style.maxHeight = "200px";
-    //     }
-    //     else{
-    //         menuItems.style.maxHeight = "0px";
-    //     }
-    // }
 </script>
 
 
 <script>
        $(document).ready(function() {
 
-             // Function to fetch and display order details based on status
             function fetchEventDetails(status) {
-                // Check if status is provided
                 if (status) {
                     $.ajax({
                         url: 'user-order_fetch.php',
@@ -318,7 +306,6 @@ var menuItems = document.getElementById("menuItems");
                 }
             }
 
-
             // Function to fetch and update user counts
             function fetchEventCounts() {
                 $.ajax({
@@ -328,7 +315,7 @@ var menuItems = document.getElementById("menuItems");
                     success: function(response) {
                         $('.pending-orders-count').text(response.Pending);
                         $('.toShip-orders-count').text(response.ToShip);
-                        $('.toReceived-orders-count').text(response.ToReceived);
+                        $('.toReceive-orders-count').text(response.ToReceive); 
                         $('.completed-orders-count').text(response.Completed);
                     },
                     error: function() {
@@ -337,7 +324,8 @@ var menuItems = document.getElementById("menuItems");
                 });
             }
 
-            // Click event for "More Info" buttons
+
+            // for "More Info" buttons
             $('.small-box-1').click(function() {
                 var status = $(this).data('status');
                 fetchEventDetails(status);

@@ -14,14 +14,6 @@ if(isset($_SESSION['user_id'])) {
         $stmt->execute(['user_id' => $user_id]);
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Filter out-of-stock items
-        $filteredProducts = array_filter($products, function($product) {
-            return $product['stock'] > 0;
-        });
-
-        // Reassign filtered products to the original variable
-        $products = $filteredProducts;
-
         // Update cart count
         $cart_count = count($products);
         
@@ -34,10 +26,6 @@ if(isset($_SESSION['user_id'])) {
     header("Location: login_form.php");
     exit();
 }
-
-$stmt = $pdo->prepare("SELECT COUNT(*) AS cart_count FROM cart WHERE user_id = :user_id");
-$stmt->execute(['user_id' => $user_id]);
-$cart_count = $stmt->fetchColumn();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -97,14 +85,10 @@ $cart_count = $stmt->fetchColumn();
             <?php 
                 $total = 0;
                 foreach ($products as $product) : 
-                    if ($product['stock'] <= 0) {
-                        // Skip this product and continue to the next one
-                        continue;
-                    }
-
+                   // Check if product exists and is in stock
+                   if ($product['product_id'] && $product['stock'] > 0) {
                     //price based on quantity
                     $price = ($product['quantity'] <= 2) ? $product['retail_price'] : $product['discounted_price'];
-
                     $product['price'] = $price; 
                     $subtotal = $price * $product['quantity'];
                     $total += $subtotal; 
@@ -128,7 +112,17 @@ $cart_count = $stmt->fetchColumn();
                 <td class="subtotal" id="subtotal_<?php echo $product['cart_id']; ?>">₱<?php echo number_format($subtotal, 2); ?></td>
                 <td><button class="btn-remove" data-id='<?php echo $product['cart_id']; ?>'>Remove</button></td>
             </tr>
-            <?php endforeach; ?>
+            <?php
+                } elseif ($product['product_id'] && $product['stock'] <= 0) {
+            ?>
+            <tr>
+            <td><input type="checkbox" name="selectedItems[]" value="<?php echo $product['cart_id']; ?>" disabled></td>
+                <td><img src="images/upload/<?php echo $product['photo']; ?>" alt="Product Photo" style="max-width: 50px; max-height: 50px;"></td>
+                <td><?php echo $product['prod_name']; ?></td>
+                <td colspan="3" style= "color: red;">This item is currently unavailable.</td>
+                <td><button class="btn-remove" data-id='<?php echo $product['cart_id']; ?>'>Remove</button></td>
+            </tr>
+            <?php }endforeach; ?>
             <tr>
                 <td colspan="5" style="text-align: right;"><strong>Total:</strong></td>
                 <td id="total">₱<?php echo number_format($total, 2); ?></td>

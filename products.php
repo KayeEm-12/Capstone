@@ -91,6 +91,9 @@ if (isset($_GET['id'])) {
     p{
         font-size: 14px;
     }
+    h3{
+        border-bottom: 1px solid red;
+    }
     </style>
 <head>
     <meta charset="UTF-8">
@@ -164,8 +167,9 @@ if (isset($_GET['id'])) {
                             <?php echo $product['prod_name']; ?>
                         </a>
                     </h3>
+                    <p style="text-align: center; font-weight: bold;" >"Avail 3pcs above to get Discounted price"</p>
                     <p>Discounted Price: ₱ <?php echo number_format($product['discounted_price'], 2); ?></p>
-                    <p>Retail Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
+                    <p>Regular Retail Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
                     <p>Stock: <?php echo number_format($product['stock']); ?></p>
                 </div>
             <?php endforeach; ?>

@@ -18,4 +18,5 @@ if (isset($_SESSION['user_id'])) {
 } else {
     $output['message'] = 'User not logged in';
     echo json_encode($output); 
+}
 ?>

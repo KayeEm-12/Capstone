@@ -123,6 +123,25 @@ button {
 button:hover {
     background-color: #036dbd; 
 }
+
+input[type="radio"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    outline: none;
+    cursor: pointer;
+    margin-right: 10px; /* Adjust as needed */
+}
+
+input[type="radio"]:checked {
+    background-color: #000;
+}
+
+
 footer {
     /* border: 5px solid #000000; */
     width: 100%;
@@ -204,6 +223,7 @@ footer {
 </div>
 
 <body>
+<form action="place-order.php" method="POST">
     <table>
         <thead>
             <tr>
@@ -219,31 +239,45 @@ footer {
             <tr>
                 <td><img src="images/upload/<?php echo $product['photo']; ?>" alt="Product Photo" style="max-width: 50px; max-height: 50px;"></td>
                 <td><?php echo isset($product['prod_name']) ? $product['prod_name'] : ''; ?></td>
-                <td><?php echo isset($product['prod_price']) ? $product['prod_price'] : ''; ?></td>
+                <!-- <td><?php echo isset($product['prod_price']) ? $product['prod_price'] : ''; ?></td> -->
+                <td><?php echo isset($product['price']) ? $product['price'] : ''; ?></td>
                 <td><?php echo isset($product['quantity']) ? $product['quantity'] : ''; ?></td>
                 <td class="subtotal"><?php echo isset($product['subtotal']) ? number_format($product['subtotal'], 2) : ''; ?></td>
             </tr>
             <?php endforeach; ?>
-
             <tr>
+                <td colspan="2"><label for="pickupDelivery">Choose Delivery Option:</label></td>
+                <td colspan="5" style="text-align: center;">
+                    <input type="radio" id="pickup" name="pickupDelivery" value="pickup">
+                    <label for="pickup">Pickup</label>
+                
+                    <input type="radio" id="delivery" name="pickupDelivery" value="delivery"> 
+                    <label for="delivery">Delivery</label>
+                </td>
+            </tr>
+            <!-- <tr>
                 <td colspan="4" style="text-align: right;"><strong>Delivery Fee:</strong></td>
                 <td><?php echo number_format($deliveryFee, 2); ?></td>
+            </tr> -->
+            <tr id="deliveryFeeRow" style="display: none;">
+                <td colspan="4" style="text-align: right;"><strong>Delivery Fee:</strong></td>
+                <td id="deliveryFee"><?php echo number_format($deliveryFee, 2); ?></td>
             </tr>
+
             <tr>
                 <td colspan="4" style="text-align: right;"><strong>Total:</strong></td>
                 <td id="total"><?php echo number_format($total, 2); ?></td>
             </tr>
         </tbody>
     </table>
-<form action="place-order.php" method="POST">
-    <button type="submit">Place Order</button>
-    <?php foreach ($selectedProducts as $product): ?>
-        <input type="hidden" name="selectedItems[]" value="<?php echo $product['product_id']; ?>">
-        <input type="hidden" name="selectedQuantities[]" value="<?php echo $product['quantity']; ?>">
-        <input type="hidden" name="selectedPrices[]" value="<?php echo isset($price) ? $price : ''; ?>">
-        
-    <?php endforeach; ?>
-</form>
+    
+        <button type="submit">Place Order</button>
+        <?php foreach ($selectedProducts as $product): ?>
+            <input type="hidden" name="selectedItems[]" value="<?php echo $product['product_id']; ?>">
+            <input type="hidden" name="selectedQuantities[]" value="<?php echo $product['quantity']; ?>">
+            <input type="hidden" name="selectedPrices[]" value="<?php echo isset($price) ? $price : ''; ?>">
+        <?php endforeach; ?>
+    </form>
     
     <footer>
     <div class="container">
@@ -271,6 +305,20 @@ footer {
             MenuItems.style.maxHeight = "0px";
         }
     }
+
+    var deliveryOption = document.querySelectorAll('input[name="pickupDelivery"]');
+    var deliveryFeeRow = document.getElementById('deliveryFeeRow');
+
+    deliveryOption.forEach(function(option) {
+        option.addEventListener('change', function() {
+            if (option.value === 'delivery') {
+                deliveryFeeRow.style.display = 'table-row'; 
+            } else {
+                deliveryFeeRow.style.display = 'none'; 
+            }
+        });
+    });
 </script>
+
 </body>
 </html>

@@ -27,10 +27,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
             $dateOrdered = date("Y-m-d H:i:s");
             $order_status = 'Pending';
-            $stmt = $pdo->prepare("INSERT INTO orders (date_ordered, order_status, user_id, address_id) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$dateOrdered, $order_status, $userId, $addressId]);
+            $deliveryOption = $_POST['pickupDelivery'];
+            $stmt = $pdo->prepare("INSERT INTO orders (date_ordered, order_status, user_id, address_id, delivery_option) VALUES (?, ?, ?, ?, ?)");
+            // $stmt = $pdo->prepare("INSERT INTO orders (date_ordered, order_status, user_id, address_id) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$dateOrdered, $order_status, $userId, $addressId, $deliveryOption]);
+            // $stmt->execute([$dateOrdered, $order_status, $userId, $addressId]);
             $orderId = $pdo->lastInsertId();
-        
+            var_dump($_POST['pickupDelivery']);
             $totalPrice = 0;
             foreach ($selectedItems as $index => $itemId) {
                 $stmt = $pdo->prepare("SELECT discounted_price, retail_price, stock FROM products WHERE product_id = ?");
@@ -64,10 +67,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     throw new Exception("Product details not found for product ID: $itemId");
                 }
             }
-            if (array_sum($selectedQuantities) <= 2) {
+            // if (array_sum($selectedQuantities) <= 2) {
+            //     $deliveryFee = 50.00; 
+            //     $totalPrice += $deliveryFee;
+            // }
+
+             // Calculate delivery fee only if the delivery option is not "Pickup"
+             if ($deliveryOption !== "pickup") {
                 $deliveryFee = 50.00; 
                 $totalPrice += $deliveryFee;
             }
+            
             $stmt = $pdo->prepare("UPDATE orders SET total_price = ? WHERE order_id = ?");
             $stmt->execute([$totalPrice, $orderId]);
             

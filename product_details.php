@@ -42,8 +42,8 @@ if (isset($_GET['product_id']) && is_numeric($_GET['product_id'])) {
             <nav id="menuItems">
                 <ul>
                     <li><a href="http://localhost/E-commerce/customer_dash.php">Home</a></li>
-                    <li><a href="">Products</a></li>
-                    <li><a href="">My Orders</a></li>
+                    <li><a href="products.php">Products</a></li>
+                    <li><a href="my_orders.php">My Orders</a></li>
                     <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
                     <!-- <li><a href="">Account</a></li> -->
                 </ul>
@@ -195,7 +195,7 @@ if (isset($_GET['product_id']) && is_numeric($_GET['product_id'])) {
                     text: response.message,
                     confirmButtonText: 'OK'
                 }).then(function() {
-                    window.location = 'http://localhost/E-commerce/customer_dash.php';
+                    window.location = 'http://localhost/E-commerce/cart-view.php';
                 });
             } else {
                 Swal.fire({

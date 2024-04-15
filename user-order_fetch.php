@@ -5,10 +5,11 @@ if (isset($_GET['status'])) {
     $status = $_GET['status'];
 
     $query = "SELECT o.order_id, u.first_name, a.barangay, a.street, o.order_status
-              FROM orders o
-              INNER JOIN users u ON o.user_id = u.user_id
-              INNER JOIN address a ON o.address_id = a.address_id
-              WHERE od.order_status = :status";
+          FROM orders o
+          INNER JOIN users u ON o.user_id = u.user_id
+          INNER JOIN address a ON o.address_id = a.address_id
+          WHERE o.order_status = :status"; 
+
 
     $stmt = $pdo->prepare($query);
     $stmt->bindParam(':status', $status);
@@ -33,8 +34,15 @@ if (isset($_GET['status'])) {
 
     echo "</table>";
 
-    $stmt->close();
-
+    echo "<script>
+    $(document).ready(function() {
+        $('.view-button').click(function() {
+            var orderId = $(this).data('id');
+            window.location.href = 'staff_view_order.php?order_id=' + orderId;
+        });
+    });
+  </script>";
+  
 } else {
     echo "<tr><td colspan='4'>Status not PROVIDED.</td></tr>";
 }

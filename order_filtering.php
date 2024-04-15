@@ -1,31 +1,35 @@
 <?php
 require 'DB/db_con.php';
 
-// Fetch count of pending Orders
-$query_pending = "SELECT COUNT(*) AS numrows FROM orders WHERE order_status = 'Pending'";
-$result_pending = mysqli_query($conn, $query_pending);
-$pending_count = mysqli_fetch_assoc($result_pending)['numrows'];
+try {
+    $query_pending = "SELECT COUNT(*) AS numrows FROM orders WHERE order_status = 'Pending'";
+    $stmt_pending = $pdo->query($query_pending);
+    $pending_count = $stmt_pending->fetch(PDO::FETCH_ASSOC)['numrows'];
+    
+    $query_toShip = "SELECT COUNT(*) AS numrows FROM orders WHERE order_status = 'ToShip'";
+    $stmt_toShip = $pdo->query($query_toShip);
+    $toShip_count = $stmt_toShip->fetch(PDO::FETCH_ASSOC)['numrows'];
 
-// Fetch count of ToShip Orders
-$query_toShip = "SELECT COUNT(*) AS numrows FROM orders WHERE order_status = 'ToShip'";
-$result_toShip = mysqli_query($conn, $query_toShip);
-$toShip_count = mysqli_fetch_assoc($result_toShip)['numrows'];
+    $query_toReceive = "SELECT COUNT(*) AS numrows FROM orders WHERE order_status = 'ToReceive'";
+    $stmt_toReceive = $pdo->query($query_toReceive);
+    $toReceive_count = $stmt_toReceive->fetch(PDO::FETCH_ASSOC)['numrows'];
 
-// Fetch count of ToReceived Orders
-$query_toReceived = "SELECT COUNT(*) AS numrows FROM orders WHERE order_status = 'ToReceived'";
-$result_toReceived = mysqli_query($conn, $query_toReceived);
-$toReceived_count = mysqli_fetch_assoc($result_toReceived)['numrows'];
+    $query_completed = "SELECT COUNT(*) AS numrows FROM orders WHERE order_status = 'Completed'";
+    $stmt_completed = $pdo->query($query_completed);
+    $completed_count = $stmt_completed->fetch(PDO::FETCH_ASSOC)['numrows'];
 
-// Fetch count of Completed Orders
-$query_completed = "SELECT COUNT(*) AS numrows FROM orders WHERE order_status = 'Completed'";
-$result_completed = mysqli_query($conn, $query_completed);
-$completed_count = mysqli_fetch_assoc($result_completed)['numrows'];
-
-// Output counts for pending, toShip, toReceived, and completed orders
-echo json_encode(array(
-    'pending' => $pending_count,
-    'toShip' => $toShip_count,
-    'toReceived' => $toReceived_count,
-    'completed' => $completed_count
-));
+    echo json_encode(array(
+        'Pending' => $pending_count,
+        'ToShip' => $toShip_count,
+        'ToReceive' => $toReceive_count,
+        'Completed' => $completed_count
+    ));
+} catch (PDOException $e) {
+    echo '<script>';
+    echo 'console.error(' . json_encode('Error occurred while fetching order counts: ' . $e->getMessage()) . ');';
+    echo '</script>';
+    echo json_encode(array(
+        'error' => 'Error occurred while fetching order counts: ' . $e->getMessage()
+    ));
+}
 ?>

@@ -10,3 +10,4 @@ $stmt = $pdo->prepare("SELECT COUNT(*) AS cart_count FROM cart WHERE user_id = :
 $stmt->execute(['user_id' => $user_id]);
 $cart_count = $stmt->fetchColumn();
 ?>
+
