@@ -99,23 +99,25 @@ a{
 </head>
 <body>
     <div class="navbar">
-            <div class="logo">
+        <div class="logo">
+            <a href="http://localhost/E-commerce/customer_dash.php">
                 <img src="images/Logo.png" width="125">
-            </div>
-            <nav>
-            <ul id="MenuItems">
-                <li><a href="delivery_dash.php">Home</a></li>
-                <li><a href="">Products</a></li>
-                <li><a href="">My Orders</a></li>
-                <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
-                <!-- <li><a href="">Account</a></li> -->
-            </ul>
-            </nav>
-            <a href="http://localhost/E-commerce/Account.php">
-            <img src="images/profile-icon.png" width="30px" height="30px" class="icon">
             </a>
-            <img src="images/menu.png" class="menu-icon" onclick="menutoggle()">
         </div>
+        <nav>
+        <ul id="MenuItems">
+            <li><a href="delivery_dash.php">Home</a></li>
+            <li><a href="products.php">Products</a></li>
+            <li><a href="my_orders.php">My Orders</a></li>
+            <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
+            <!-- <li><a href="">Account</a></li> -->
+        </ul>
+        </nav>
+        <a href="http://localhost/E-commerce/Account.php">
+        <img src="images/profile-icon.png" width="30px" height="30px" class="icon">
+        </a>
+        <img src="images/menu.png" class="menu-icon" onclick="menutoggle()">
+    </div>
 <!-- --end-- -->
 
 <!--footer-->

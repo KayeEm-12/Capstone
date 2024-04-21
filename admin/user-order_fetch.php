@@ -1,5 +1,5 @@
 <?php
-require 'DB/db_con.php';
+require '../DB/db_con.php';
 
 if (isset($_GET['status'])) {
     $status = $_GET['status'];
@@ -38,7 +38,7 @@ if (isset($_GET['status'])) {
     $(document).ready(function() {
         $('.view-button').click(function() {
             var orderId = $(this).data('id');
-            window.location.href = 'staff_view_order.php?order_id=' + orderId;
+            window.location.href = 'http://localhost/E-commerce/admin/view-order.php?order_id=' + orderId;
         });
     });
   </script>";

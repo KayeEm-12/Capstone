@@ -12,13 +12,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $pdo->prepare("UPDATE users SET password = ?, confirm_password = ?, reset_code = NULL WHERE email = ?");
         $stmt->execute([$hashedPassword, $hashedPassword, $email]);
 
-        echo "Password updated successfully. You can now <a href='login_form.php'>login</a> with your new password.";
+        //echo "Password updated successfully. You can now <a href='login_form.php'>login</a> with your new password.";
+       //echo "<script>alert('Password updated successfully. You can now login with your new password.'); window.location='login_form.php';</script>";
+       
+       $success_message = "Password updated successfully. You can now <a href='login_form.php'>login</a> with your new password.";
     } else {
         echo "Passwords do not match.";
     }
 }
 ?>
-?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -110,7 +113,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php
         if (isset($error_message)) {
             echo '<p class="error-message">' . $error_message . '</p>';
+        } elseif (isset($success_message)) {
+            echo '<p class="success-message">' . $success_message . '</p>';
         }
+
         ?>
         <form action="" method="post">
             <input type="hidden" name="email" value="<?php echo $_GET['email']; ?>">
@@ -126,6 +132,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
     </div>
 </div>
+
 </body>
 </html>
 

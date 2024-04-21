@@ -29,7 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     case 'Admin':
                         header("location: http://localhost/E-commerce/admin/admin_dash.php");
                         break;
-                    case 'Customer':
+                    case 'Retail_Customer':
+                    case 'Wholesale_Customer': 
                         header("location: customer_dash.php");
                         break;
                     case 'Staff':

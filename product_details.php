@@ -36,33 +36,35 @@ if (isset($_GET['product_id']) && is_numeric($_GET['product_id'])) {
 </head>
 <body>
     <div class="navbar">
-            <div class="logo">
+        <div class="logo">
+            <a href="http://localhost/E-commerce/customer_dash.php">
                 <img src="images/Logo.png" width="125">
-            </div>
-            <nav id="menuItems">
-                <ul>
-                    <li><a href="http://localhost/E-commerce/customer_dash.php">Home</a></li>
-                    <li><a href="products.php">Products</a></li>
-                    <li><a href="my_orders.php">My Orders</a></li>
-                    <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
-                    <!-- <li><a href="">Account</a></li> -->
-                </ul>
-            </nav>
-
-            <div class="setting-sec">
-                <a href="http://localhost/E-commerce/Account.php">
-                    <i class="fa-solid fa-user"></i>
-                    <!-- <img src="images/profile-icon.png" width="30px" height="30px" class="icon"> -->
-                </a>
-                <div class="cart-sec">
-                    <a href="http://localhost/E-commerce/cart-view.php">
-                        <span class="cart-count"><?php echo $cart_count; ?></span>
-                        <img src="images/cart.png" width="30px" height="30px">
-                    </a>
-                </div>
-                <img src="images/menu.png" class="menu-icon" onclick="menutoggle()">
-            </div>
+            </a>
         </div>
+        <nav id="menuItems">
+            <ul>
+                <li><a href="http://localhost/E-commerce/customer_dash.php">Home</a></li>
+                <li><a href="products.php">Products</a></li>
+                <li><a href="my_orders.php">My Orders</a></li>
+                <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
+                <!-- <li><a href="">Account</a></li> -->
+            </ul>
+        </nav>
+
+        <div class="setting-sec">
+            <a href="http://localhost/E-commerce/Account.php">
+                <i class="fa-solid fa-user"></i>
+                <!-- <img src="images/profile-icon.png" width="30px" height="30px" class="icon"> -->
+            </a>
+            <div class="cart-sec">
+                <a href="http://localhost/E-commerce/cart-view.php">
+                    <span class="cart-count"><?php echo $cart_count; ?></span>
+                    <img src="images/cart.png" width="30px" height="30px">
+                </a>
+            </div>
+            <img src="images/menu.png" class="menu-icon" onclick="menutoggle()">
+        </div>
+    </div>
 
     <div class="prod-container">
         <div class="product-item">
@@ -70,8 +72,14 @@ if (isset($_GET['product_id']) && is_numeric($_GET['product_id'])) {
                 <img src="images/upload/<?php echo $product['photo']; ?>" alt="Product Photo" class="prod-img">
             
                 <h3 style="text-align: center;"><?php echo $product['prod_name']; ?></h3>
+                <?php
+                    // Check if user is logged in and role is 'Wholesale'
+                    if (isset($_SESSION['role']) && $_SESSION['role'] == 'Wholesale_Customer'):
+                ?>
                 <p>Discounted Price: ₱ <?php echo number_format($product['discounted_price'], 2); ?></p>
-                <p>Retail Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
+                <?php else: ?>
+                    <p>Regular Retail Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
+                <?php endif; ?>
                 <p>Stock: <span id="stock"><?php echo number_format($product['stock']); ?></span></p>
                 
                 <p style="text-align: center;">Category Name: <?php echo $product['category_name']; ?></p>

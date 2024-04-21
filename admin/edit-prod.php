@@ -150,12 +150,14 @@ button :hover{
     <div class="container">
         <div class="navbar">
             <div class="logo">
-                <img src="../images/Logo.png" width="125">
+                <a href="http://localhost/E-commerce/admin/admin_dash.php">
+                    <img src="../images/Logo.png" width="125">
+                </a>
             </div>
             <nav id="menuItems">
             <ul>
             <li><a href="http://localhost/E-commerce/admin/admin_dash.php">Dashboards</a></li>
-                <li><a href="http://localhost/E-commerce/admin/view_order.php">Manage Orders</a></li>
+                <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
                 <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
                 <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
                 <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>

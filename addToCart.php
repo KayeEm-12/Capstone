@@ -4,7 +4,8 @@ require 'count-cart.php';
 $output = array('success' => false);
 
 try {
-    if (isset($_SESSION['user_id']) && strcasecmp($_SESSION['role'], 'customer') === 0) {
+    if (isset($_SESSION['user_id']) && ($_SESSION['role'] == 'Retail_Customer' || $_SESSION['role'] == 'Wholesale_Customer')) {
+     // if (isset($_SESSION['user_id']) && strcasecmp($_SESSION['role'], 'customer') === 0) {
         if (isset($_POST['product_id'], $_POST['quantity']) && is_numeric($_POST['product_id']) && is_numeric($_POST['quantity'])) {
             $user_id = $_SESSION['user_id'];
             $product_id = (int)$_POST['product_id'];
@@ -16,7 +17,15 @@ try {
 
             if ($product && $quantity > 0) {
                 if ($product['stock'] > 0) { 
-                    $price = ($quantity <= 2) ? $product['retail_price'] : $product['discounted_price'];
+                    // $price = ($quantity <= 2) ? $product['retail_price'] : $product['discounted_price'];
+                    
+                     // Choose price based on user role
+                     if ($_SESSION['role'] == 'Retail_Customer') {
+                        $price = $product['retail_price'];  // Always use retail price for retail customers
+                    } else if ($_SESSION['role'] == 'Wholesale_Customer') {
+                        $price = $product['discounted_price'];
+                        // $price = ($quantity >= 3) ? $product['discounted_price'] : $product['retail_price'];  // Use discounted price if quantity is 3 or more
+                    }
                     $stmt = $pdo->prepare("SELECT COUNT(*) AS numrows FROM cart WHERE user_id = :user_id AND product_id = :product_id");
                     $stmt->execute(['user_id' => $user_id, 'product_id' => $product_id]);
                     $row = $stmt->fetch();

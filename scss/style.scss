@@ -615,7 +615,7 @@ footer{
                     a:hover{
                         color: red; 
                     }
-                    a:active{
+                    a.active{
                         color: red; 
                     }
                 }                
@@ -627,34 +627,44 @@ footer{
                 padding: 50px;
                 border: 2px solid gray;
                 box-shadow: #555;
-            }
-            .order-item {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 10px;
-                img {
-                    width: 100px;
-                    margin-right: 10px;
+                .order-item {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 10px;
+                    img {
+                        width: 100px;
+                        margin-right: 10px;
+                    }
+                    .product-details {
+                        display: flex;
+                        .product-name {
+                            font-weight: bold;
+                        }
+                        
+                    }
+                    .subtotal {
+                        margin-left: auto; 
+                        font-weight: bold;
+                    } 
+                }
+                .delivery-fee {
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: center;
+                    margin-top: 20px;
+                    font-weight: bold;
+                }
+                .total-price {
+                    display: flex;
+                    justify-content: flex-end; 
+                    align-items: center;
+                    margin-top: 20px;
+                    font-weight: bold;
                 }
             }
-            .product-details {
-                display: flex;
-            }
-            .product-name {
-                font-weight: bold;
-            }
-            .subtotal {
-                margin-left: auto; 
-                font-weight: bold;
-            }
-            .total-price {
-                display: flex;
-                justify-content: flex-end; 
-                align-items: center;
-                margin-top: 20px;
-                font-weight: bold;
-            }
+            
+            
         }
     }
 

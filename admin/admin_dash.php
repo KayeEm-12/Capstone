@@ -9,6 +9,21 @@ require '../DB/db_con.php';
     $year = $_GET['year'];
   }
 
+//   try {
+//     $sql = "SELECT o.order_id, o.order_status, u.first_name, a.barangay, a.street
+//     FROM orders o
+//     INNER JOIN users u ON o.user_id = u.user_id
+//     INNER JOIN address a ON o.address_id = a.address_id";
+    
+//     $stmt = $pdo->prepare($sql);
+//     $stmt->execute();
+//     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+//     $stmt = null;
+
+// } catch (PDOException $e) {
+//     die("Error: " . $e->getMessage());
+// }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,12 +90,14 @@ require '../DB/db_con.php';
 <body>
     <div class="navbar">
         <div class="logo">
-            <img src="../images/Logo.png" width="125">
+            <a href="http://localhost/E-commerce/admin/admin_dash.php">
+                <img src="../images/Logo.png" width="125">
+            </a>
         </div>
         <nav id="menuItems">
         <ul>
         <li><a href="http://localhost/E-commerce/admin/admin_dash.php">Dashboards</a></li>
-            <li><a href="http://localhost/E-commerce/admin/view_order.php">Manage Orders</a></li>
+            <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
             <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
             <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
             <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>
@@ -113,7 +130,7 @@ require '../DB/db_con.php';
     <div class="icon">
         <i class="fa fa-shopping-cart"></i>
     </div>
-    <a href="http://localhost/E-commerce/admin/view_order.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+    <a href="http://localhost/E-commerce/admin/manage_order.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
     </div>
     </div>
 
@@ -155,6 +172,7 @@ require '../DB/db_con.php';
     </div>
     </div>
 </div>
+
 <!--footer-->
 <footer>
     <div class="container">

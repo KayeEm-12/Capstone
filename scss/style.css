@@ -544,7 +544,7 @@ footer .container .row .footer-col-2 p {
 .order-wrapper .order-container .order-details .stats .status a:hover {
   color: red;
 }
-.order-wrapper .order-container .order-details .stats .status a:active {
+.order-wrapper .order-container .order-details .stats .status a.active {
   color: red;
 }
 .order-wrapper .order-container .order-details .order {
@@ -554,27 +554,34 @@ footer .container .row .footer-col-2 p {
   border: 2px solid gray;
   box-shadow: #555;
 }
-.order-wrapper .order-container .order-details .order-item {
+.order-wrapper .order-container .order-details .order .order-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px;
 }
-.order-wrapper .order-container .order-details .order-item img {
+.order-wrapper .order-container .order-details .order .order-item img {
   width: 100px;
   margin-right: 10px;
 }
-.order-wrapper .order-container .order-details .product-details {
+.order-wrapper .order-container .order-details .order .order-item .product-details {
   display: flex;
 }
-.order-wrapper .order-container .order-details .product-name {
+.order-wrapper .order-container .order-details .order .order-item .product-details .product-name {
   font-weight: bold;
 }
-.order-wrapper .order-container .order-details .subtotal {
+.order-wrapper .order-container .order-details .order .order-item .subtotal {
   margin-left: auto;
   font-weight: bold;
 }
-.order-wrapper .order-container .order-details .total-price {
+.order-wrapper .order-container .order-details .order .delivery-fee {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
+  font-weight: bold;
+}
+.order-wrapper .order-container .order-details .order .total-price {
   display: flex;
   justify-content: flex-end;
   align-items: center;

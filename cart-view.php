@@ -7,9 +7,11 @@ if(isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
 
     try {
-        $sql = "SELECT cart.*, products.prod_name, products.discounted_price, products.retail_price, products.photo, products.stock FROM cart
+        $sql = "SELECT cart.*, products.prod_name, products.discounted_price, products.retail_price, products.photo, products.stock, users.role 
+        FROM cart
         INNER JOIN products ON cart.product_id = products.product_id
-        WHERE user_id = :user_id";
+        INNER JOIN users ON cart.user_id = users.user_id
+        WHERE cart.user_id = :user_id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['user_id' => $user_id]);
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -44,7 +46,9 @@ if(isset($_SESSION['user_id'])) {
 <body>
     <div class="navbar">
         <div class="logo">
-            <img src="images/Logo.png" width="125">
+            <a href="http://localhost/E-commerce/customer_dash.php">
+                <img src="images/Logo.png" width="125">
+            </a>
         </div>
         <nav id="menuItems">
             <ul>
@@ -87,11 +91,10 @@ if(isset($_SESSION['user_id'])) {
                 foreach ($products as $product) : 
                    // Check if product exists and is in stock
                    if ($product['product_id'] && $product['stock'] > 0) {
-                    //price based on quantity
-                    $price = ($product['quantity'] <= 2) ? $product['retail_price'] : $product['discounted_price'];
-                    $product['price'] = $price; 
+                    //price based on role
+                    $price = ($product['role'] === 'Retail_Customer') ? $product['retail_price'] : $product['discounted_price'];
                     $subtotal = $price * $product['quantity'];
-                    $total += $subtotal; 
+                    $total += $subtotal;
             ?>
             <tr>
                 <td><input type="checkbox" name="selectedItems[]" value="<?php echo $product['cart_id']; ?>"></td>
@@ -168,33 +171,37 @@ function getDetails() {
     success: function(response) {
         if (!response.error) {
         var html = '';
-            if (response.length > 0) {
-                $price = response[i].price 
+        if (!response.error) {
+                var html = '';
+                var totalPrice = 0;
                 for (var i = 0; i < response.length; i++) {
-                html += '<tr>';
-                html += '<td>' + response[i].cart_id + '</td>'; 
-                html += '<td>' + response[i].photo + '</td>';
-                html += '<td>' + response[i].name + '</td>';
-                html += '<td>' + response[i].price + '</td>';
-                html += '<td>' + response[i].quantity + '</td>';
-                html += '<td>' + response[i].subtotal + '</td>';
-                html += '</tr>';
+                    var price = (response[i].role === 'Retail_Customer') ? response[i].retail_price : response[i].discounted_price;
+                    var subtotal = price * response[i].quantity;
+                    totalPrice += subtotal;
+                    html += '<tr>';
+                    html += '<td>' + response[i].cart_id + '</td>'; 
+                    html += '<td>' + response[i].photo + '</td>';
+                    html += '<td>' + response[i].name + '</td>';
+                    html += '<td>' + price.toFixed(2) + '</td>';
+                    html += '<td>' + response[i].quantity + '</td>';
+                    html += '<td>' + subtotal.toFixed(2) + '</td>';
+                    html += '</tr>';
                 }
+                $('#tbody').html(html);
+                $('#total').text('₱' + totalPrice.toFixed(2));
             } else {
-                html += '<tr><td colspan="6">Your cart is empty.</td></tr>';
+                console.error(response.message);
             }
-        $('#tbody').html(html);
-        
-        console.log(response[i].price );
-    } else {
-        console.error(response.message);
-    }
-    },
-    error: function(xhr, status, error) {
-        console.error('AJAX Error: ' + status + ' - ' + error);
-    }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error: ' + status + ' - ' + error);
+        }
     });
 }
+
+$(document).ready(function() {
+    getDetails();
+});
 </script>
 
 <script>
@@ -298,27 +305,27 @@ function getTotal(){
     });
 }
 
-function removeProduct(cartId) {
-    $.ajax({
-        type: 'POST',
-        url: 'remove-from-cart.php',
-        data: {
-            cart_id: cartId
-        },
-        dataType: 'json',
-        success: function(response) {
-            if (!response.error) {
-                $('#row_' + cartId).remove();
-                $('#total').text('₱' + response.total.toFixed(2));
-            } else {
-                console.error(response.message);
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX Error: ' + status + ' - ' + error);
-        }
-    });
-}
+// function removeProduct(cartId) {
+//     $.ajax({
+//         type: 'POST',
+//         url: '',
+//         data: {
+//             cart_id: cartId
+//         },
+//         dataType: 'json',
+//         success: function(response) {
+//             if (!response.error) {
+//                 $('#row_' + cartId).remove();
+//                 $('#total').text('₱' + response.total.toFixed(2));
+//             } else {
+//                 console.error(response.message);
+//             }
+//         },
+//         error: function(xhr, status, error) {
+//             console.error('AJAX Error: ' + status + ' - ' + error);
+//         }
+//     });
+// }
 </script>
 
 <script>

@@ -118,7 +118,9 @@ if (isset($_GET['id'])) {
 <body>
     <div class="navbar">
         <div class="logo">
-            <img src="images/Logo.png" width="125">
+            <a href="http://localhost/E-commerce/customer_dash.php">
+                <img src="images/Logo.png" width="125">
+            </a>
         </div>
         <nav id="menuItems">
             <ul>
@@ -126,8 +128,10 @@ if (isset($_GET['id'])) {
                 <li><a href="products.php">Products</a></li>
                 <li><a href="my_orders.php">My Orders</a></li>
                 <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
+
             </ul>
-        </nav>
+        </nav> 
+
 
         <div class="setting-sec">
             <a href="http://localhost/E-commerce/Account.php">
@@ -184,12 +188,16 @@ if (isset($_GET['id'])) {
                             <?php echo $product['prod_name']; ?>
                         </a>
                     </h3>
-                    <p style="text-align: center; font-weight: bold;" >"Avail 3pcs above to get Discounted price"</p>
+                    <?php
+                    // Check if user is logged in and role is 'Wholesale'
+                    if (isset($_SESSION['role']) && $_SESSION['role'] == 'Wholesale_Customer'):
+                    ?>
+                    <!-- <p style="text-align: center; font-weight: bold;" >"Avail 3pcs above to get Discounted price"</p> -->
                     <p>Discounted Price: ₱ <?php echo number_format($product['discounted_price'], 2); ?></p>
-                    <p>Regular Retail Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
+                    <?php else: ?>
+                        <p>Regular Retail Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
+                    <?php endif; ?>
                     <p>Stock: <?php echo number_format($product['stock']); ?></p>
-                    <!-- <a href="product_details.php?product_id=<?php echo $product['product_id']; ?>" class="details"><i class="fa fa-eye"></i> 
-                    </a> -->
                 </div>
             <?php endforeach; ?>
         </div>
@@ -227,7 +235,7 @@ if (isset($_GET['id'])) {
         </div>
     </div>
     </footer>
-<script>
+<!-- <script>
     function search(event) {
         if (event.keyCode === 13) { 
             var searchTerm = document.getElementById("search-input").value.trim();
@@ -250,7 +258,7 @@ if (isset($_GET['id'])) {
             }
         }
     }
-    </script>
+</script> -->
     <script>
     function showCategory(categoryId) {
         var xhr = new XMLHttpRequest();
@@ -269,16 +277,7 @@ if (isset($_GET['id'])) {
     function menutoggle() {
         menuItems.classList.toggle("show");
     }
-    // MenuItems.style.maxHeight = "0px";
-    // function menutoggle() {
-    //     if (menuItems.style.maxHeight =="0px")
-    //     {
-    //         menuItems.style.maxHeight = "200px";
-    //     }
-    //     else{
-    //         menuItems.style.maxHeight = "0px";
-    //     }
-    // }
+
 </script>
 
 </body>

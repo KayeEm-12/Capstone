@@ -99,7 +99,9 @@
 <body>
 <div class="container">
     <div class="logo">
-        <img src="images/Logo.png" alt="Logo">
+        <a href="register_form.php">
+            <img src="images/Logo.png" alt="Logo">
+        </a>
     </div>
     <div class="form">
         <h2>Registration Form</h2>
@@ -146,7 +148,8 @@
             <div class="form-group" style="display: none;>
                 <label for="role">Role:</label>
                 <select id="role" name="role" required>
-                    <option value="Customer">Customer</option>
+                    <option value="Retail_Customer">Customer</option>
+                    <option style="display: none;" value="Wholesale_Customer">Wholesale Customer</option>
                     <option style="display: none;" value="Admin">Admin</option>
                     <option style="display: none;"  value="Staff">Staff</option>
                     <option style="display: none;" value="Delivery_personnel">Delivery_personnel</option>

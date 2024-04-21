@@ -1,5 +1,5 @@
 <?php
-require 'DB/db_con.php';
+require '../DB/db_con.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $order_id = $_POST['order_id'];

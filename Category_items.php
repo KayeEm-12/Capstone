@@ -1,9 +1,9 @@
 <?php
+session_start();
 require 'DB/db_con.php';
 
 if(isset($_POST['categoryId'])) {
     $category = $_POST['categoryId'];
-
 
     try {
         if ($category == 0) {
@@ -48,12 +48,16 @@ if(isset($_POST['categoryId'])) {
                 echo '</a>';
                 echo '</h3>';
             }
-            echo '<p style="text-align: center;">"Avail 3pcs above to get Discounted price"</p>';
-            echo '<p>Discounted Price: ₱ ' . number_format($product['discounted_price'], 2) . '</p>';
-            echo '<p>Regular Retail Price: ₱ ' . number_format($product['retail_price'], 2) . '</p>';
+            // echo '<p style="text-align: center;">"Avail 3pcs above to get Discounted price"</p>';
+            // echo '<p>Discounted Price: ₱ ' . number_format($product['discounted_price'], 2) . '</p>';
+            // echo '<p>Regular Retail Price: ₱ ' . number_format($product['retail_price'], 2) . '</p>';
+
+            if (isset($_SESSION['role']) && $_SESSION['role'] == 'Wholesale_Customer') {
+                echo '<p>Discounted Price: ₱' . number_format($product['discounted_price'], 2) . '</p>';
+            } else {
+                echo '<p>Regular Retail Price: ₱' . number_format($product['retail_price'], 2) . '</p>';
+            }
             echo '<p>Stock: ' . number_format($product['stock']) . '</p>';
-            // echo '<a href="product_details.php?product_id=' . $product['product_id'] . '" class="details">';
-            // echo '<i class="fa fa-eye"></i> View Details</a>';
             echo '</div>';
         }
     } catch (PDOException $e) {

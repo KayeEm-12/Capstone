@@ -56,6 +56,7 @@ if (isset($_GET['id'])) {
 </script>
 
 <style>
+    
     .product-list{
         display: flex;
         flex-wrap: wrap;
@@ -106,18 +107,20 @@ if (isset($_GET['id'])) {
 </head>
 <body>
     <div class="navbar">
-            <div class="logo">
+        <div class="logo">
+            <a href="http://localhost/E-commerce/customer_dash.php">
                 <img src="images/Logo.png" width="125">
-            </div>
-           <nav id="menuItems">
-                <ul>
-                    <li><a href="customer_dash.php">Home</a></li>
-                    <li><a href="products.php">Products</a></li>
-                    <li><a href="my_orders.php">My Orders</a></li>
-                    <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
-                </ul >
-            </nav>
-            <div class="setting-sec">
+            </a>
+        </div>
+        <nav id="menuItems">
+            <ul>
+                <li><a href="customer_dash.php">Home</a></li>
+                <li><a href="products.php">Products</a></li>
+                <li><a href="my_orders.php">My Orders</a></li>
+                <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
+            </ul >
+        </nav>
+        <div class="setting-sec">
             <a href="http://localhost/E-commerce/Account.php">
             <i class="fa-solid fa-user"></i>
             <!-- <img src="images/profile-icon.png" width="30px" height="30px" class="icon"> -->
@@ -167,9 +170,15 @@ if (isset($_GET['id'])) {
                             <?php echo $product['prod_name']; ?>
                         </a>
                     </h3>
-                    <p style="text-align: center; font-weight: bold;" >"Avail 3pcs above to get Discounted price"</p>
+                    <?php
+                    // Check if user is logged in and role is 'Wholesale'
+                    if (isset($_SESSION['role']) && $_SESSION['role'] == 'Wholesale_Customer'):
+                    ?> 
+                    <!-- <p style="text-align: center; font-weight: bold;" >"Avail 3pcs above to get Discounted price"</p> -->
                     <p>Discounted Price: ₱ <?php echo number_format($product['discounted_price'], 2); ?></p>
-                    <p>Regular Retail Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
+                    <?php else: ?>
+                        <p>Regular Retail Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
+                    <?php endif; ?>
                     <p>Stock: <?php echo number_format($product['stock']); ?></p>
                 </div>
             <?php endforeach; ?>
@@ -207,7 +216,7 @@ if (isset($_GET['id'])) {
         </div>
     </div>
     </footer>
-<script>
+<!-- <script>
     function search(event) {
         if (event.keyCode === 13) { 
             var searchTerm = document.getElementById("search-input").value.trim();
@@ -230,7 +239,7 @@ if (isset($_GET['id'])) {
             }
         }
     }
-    </script>
+</script> -->
     <script>
     function showCategory(categoryId) {
         var xhr = new XMLHttpRequest();

@@ -47,14 +47,154 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://kit.fontawesome.com/a1e3091ba9.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="./scss/style.scss">
-    <style>
+    <!-- <style>
+        .order-wrapper{
+            min-height: calc(100% - 255px);
+            .order-container{
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin: 0 3rem;
+                min-height: calc(100vh - 239px);
+                .profile-container{
+                    width: 250px; 
+                    padding-top: 5rem;
+                    .profile{
+                        display: flex;
+                        align-items: center;
+                        flex-direction: column;
+                        img {
+                            width: 100px; 
+                            height: auto;
+                        }
+                    }
+                    .username {
+                        font-weight: bold;
+                        margin-bottom: 5px; 
+                    }
+                    .logout {
+                        text-align: center; 
+                        a {
+                            text-decoration: none;
+                            color: #000000;
+                            font-weight: bold;
+                        }
+                        a:hover {
+                            color: red;
+                        }
+                    }
+                }
+                .account{
+                    display: flex;
+                    flex-direction: column;
+                    margin-top: 1rem;
+                    margin-left: 3rem;
+                    .dropdown{
+                        margin-bottom: 10px;
+                        position: relative;
+                        img{
+                            width: 20px; 
+                            margin-right: 5px;
+                        }
+                        .dropdown-content{
+                            display: none; 
+                            /* border: 1px solid #ccc; */
+                            border-radius: 5px;
+                            padding: 10px;
+                            margin-left: 25px;
+                            a{
+                                color: black; 
+                                text-decoration: none; 
+                                padding: 5px 0; 
+                                &:hover {
+                                    color: red; 
+                                }
+                            }
+                        }
+                        &:hover .dropdown-content {
+                            display: block;
+                            color: red; 
+                        }
+                    }
+                }
+                .order-details{
+                    flex: 1;
+                    .stats{
+                        .status{
+                            flex: 1;
+                            text-align: center;
+                            font-size: 20px;
+                            margin-bottom: 1rem;
+                            margin-top: 1rem;
+                            a{
+                                text-decoration: none;
+                                color: black; 
+                                font-weight: bold;
+                                
+                            }
+                            a:hover{
+                                color: red; 
+                            }
+                            a.active{
+                                color: red; 
+                            }
+                        }                
+                    }
+                    
+                    .order{
+                        border: 1px solid #ccc;
+                        margin-bottom: 10px;
+                        padding: 50px;
+                        border: 2px solid gray;
+                        box-shadow: #555;
+                        .order-item {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            padding: 10px;
+                            img {
+                                width: 100px;
+                                margin-right: 10px;
+                            }
+                            .product-details {
+                                display: flex;
+                                .product-name {
+                                    font-weight: bold;
+                                }
+                                
+                            }
+                            .subtotal {
+                                margin-left: auto; 
+                                font-weight: bold;
+                            } 
+                        }
+                        .delivery-fee {
+                            display: flex;
+                            justify-content: flex-end;
+                            align-items: center;
+                            margin-top: 20px;
+                            font-weight: bold;
+                        }
+                        .total-price {
+                            display: flex;
+                            justify-content: flex-end; 
+                            align-items: center;
+                            margin-top: 20px;
+                            font-weight: bold;
+                        }
+                    }
+                }
+            }
 
-    </style>
+        }
+    </style> -->
 </head>
 <body>
     <div class="navbar">
         <div class="logo">
-            <img src="images/Logo.png" width="125">
+            <a href="http://localhost/E-commerce/customer_dash.php">
+                <img src="images/Logo.png" width="125">
+            </a>
         </div>
         <nav id="menuItems">
             <ul>
@@ -146,24 +286,34 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         $stmt->execute([$order['order_id']]);
                         $orderDetails = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         
+                        // Calculate the total price of the order
+                        $totalPrice = 0;
+                        foreach ($orderDetails as $detail) {
+                            $totalPrice += $detail['quantity'] * $detail['price'];
+                        }
+
+                        // Calculate delivery fee for this order
+                        $deliveryFee = 0;
+                        if ($order['delivery_option'] === 'delivery' && $totalPrice < 2000) {
+                            $deliveryFee = 50.00;
+                        }
+
+                        // Calculate the total price including delivery fee for this order
+                        $totalPrice += $deliveryFee;
+
+
                         foreach ($orderDetails as $detail) {
                             echo '<div class="order-item">';
                             echo '<img src="images/upload/' . $detail['photo'] . '" alt="Product Photo">';
                             echo '<div class="product-details">';
                             echo '<div class="product-name">' . $detail['prod_name'] . ' <br> Qty: ' . $detail['quantity'] . '</div>';
-                            // echo '<div class="product-name">' . $detail['prod_name'] . '</div>';
-                            // echo '<div class="product-qty">Qty: ' . $detail['quantity'] . '</div>';
                             echo '<div class="product-price">Price:  ₱' . $detail['price'] . '</div>';
                             echo '</div>';
                             echo '<div class="subtotal"> ₱' . ($detail['quantity'] * $detail['price']) . '</div>';
                             echo '</div>';
                         }
-                        
-                        $totalPrice = 0;
-                        foreach ($orderDetails as $detail) {
-                            $totalPrice += $detail['quantity'] * $detail['price'];
-                        }
-                        
+                        // Display delivery fee
+                        echo '<div class="delivery-fee" >Delivery Fee: ₱' . number_format($deliveryFee, 2) . '</div>';
                         echo '<div class="total-price">Total:  ₱' . number_format($totalPrice, 2) . '</div>'; 
                         
                         if ($order['order_status'] === "To Receive") {

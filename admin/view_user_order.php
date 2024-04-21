@@ -29,9 +29,9 @@ if(isset($_GET['user_id'])) {
     <script src="https://kit.fontawesome.com/a1e3091ba9.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../scss/style.scss">
    <style>
-user-order-container{
-    min-height: 60vh;
-}
+    .user-order-container {
+        min-height: calc(100% - 255px);
+    }
     a{
         text-decoration: none;
         color: #000000;
@@ -125,7 +125,7 @@ user-order-container{
         <nav id="menuItems">
         <ul>
         <li><a href="http://localhost/E-commerce/admin/admin_dash.php">Dashboards</a></li>
-            <li><a href="http://localhost/E-commerce/admin/view_order.php">Manage Orders</a></li>
+            <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
             <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
             <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
             <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>

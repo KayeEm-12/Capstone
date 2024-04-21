@@ -1,5 +1,5 @@
 <?php
-require 'DB/db_con.php';
+require '../DB/db_con.php';
 
 try {
     $query_pending = "SELECT COUNT(*) AS numrows FROM orders WHERE order_status = 'Pending'";

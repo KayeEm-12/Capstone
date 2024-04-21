@@ -1,5 +1,5 @@
 <?php
-require 'DB/db_con.php';
+require '../DB/db_con.php';
 session_start();
 
 if(isset($_GET['order_id'])) {
@@ -32,7 +32,7 @@ if(isset($_GET['order_id'])) {
     <title>Staff Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display+swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a1e3091ba9.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="./scss/style.scss">
+    <link rel="stylesheet" href="../scss/style.scss">
 </head>
 <style>
  
@@ -155,20 +155,21 @@ button {
     <div class="staff-container">
         <div class="navbar">
             <div class="logo">
-            <img src="images/Logo.png" class= "pic" width="125">
+                <a href="http://localhost/E-commerce/staff/staff_dash.php">
+                    <img src="../images/Logo.png" class="pic" width="125">
+                </a>
             </div>
             <nav id="menuItems">
                 <ul>
-                    <li><a href="staff_dash.php">Dashboards</a></li>
+                    <!-- <li><a href="http://localhost/E-commerce/staff/staff_dash.php">Dashboards</a></li> -->
                     <!-- <li><a href="staff_view_order.php">Manage Orders</a></li> -->
-                    <li><a href="">Products</a></li>
                 </ul>
             </nav>
             <div class="setting-sec">
                 <a href="http://localhost/E-commerce/Account.php">
                 <i class="fa-solid fa-user"></i>
                 </a>
-                <img src="images/menu.png" class="menu-icon" onclick="menutoggle()">
+                <img src="../images/menu.png" class="menu-icon" onclick="menutoggle()">
             </div>
         </div>
     </div>
@@ -245,7 +246,7 @@ button {
     <div class="container">
         <div class="row">
             <div class="footer-col-1">
-            <img src="images/logo2.png" width="100px" height="60px">
+            <img src="../images/logo2.png" width="100px" height="60px">
             </div>
             <div class="footer-col-2">
             <p>&copy; <?php echo date('Y'); ?> 4M Minimart Online Store. All rights reserved.</p>

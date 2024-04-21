@@ -122,7 +122,9 @@ if (isset($_GET['id'])) {
 <body>
 <div class="navbar">
     <div class="logo">
-       <img src="images/Logo.png" width="125">
+        <a href="index.php">
+            <img src="images/Logo.png" width="125">
+        </a>
     </div>
     <nav id="menuItems">
         <ul>

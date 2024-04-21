@@ -264,7 +264,7 @@ footer {
                         $dashboardLink = 'admin/admin_dash.php';
                         break;
                     case 'Staff':
-                        $dashboardLink = 'staff_dash.php';
+                        $dashboardLink = 'staff/staff_dash.php';
                         break;
                     case 'Delivery_personnel':
                         $dashboardLink = 'delivery_dash.php';

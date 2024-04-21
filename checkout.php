@@ -1,7 +1,12 @@
 <?php
-session_start();
+// session_start();
 require 'DB/db_con.php';
+require 'count-cart.php';
 
+if (!isset($_SESSION['role'])){
+    header("Location: login_form.php");
+    exit();
+}
 // var_dump($_POST['selectedItems']);
 if(isset($_POST['selectedItems'])) {
     $selectedItems = $_POST['selectedItems'];
@@ -11,36 +16,44 @@ if(isset($_POST['selectedItems'])) {
 
     foreach ($selectedItems as $itemId) {
         $stmt = $pdo->prepare("SELECT cart.*, products.prod_name, products.discounted_price, products.retail_price, products.photo 
-        FROM cart 
-        INNER JOIN products ON cart.product_id = products.product_id 
-        WHERE cart.cart_id = :cart_id");
-
+                                FROM cart 
+                                INNER JOIN products ON cart.product_id = products.product_id 
+                                WHERE cart.cart_id = :cart_id");
         $stmt->execute(['cart_id' => $itemId]);
         $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($product) {
-            $price = ($product['quantity'] <= 2) ? $product['retail_price'] : $product['discounted_price'];
-
+            // $price = ($product['quantity'] <= 2) ? $product['retail_price'] : $product['discounted_price'];
+            $price = ($_SESSION['role'] === 'Retail_Customer') ? $product['retail_price'] : $product['discounted_price'];
             $subtotal = $price * $product['quantity'];
             $total += $subtotal;
 
             $product['price'] = $price;
             $product['subtotal'] = $subtotal;
-
             $selectedProducts[] = $product;
         }
     }
     // Calculate delivery fee based on the total amount
+    // $deliveryFee = 0;
+    // if ($total < 2000) {
+    //     $deliveryFee = 50.00; 
+    // }
+    // $deliveryFee = 0;
+    // if (isset($_POST['pickupDelivery'])){
+    //     if ($_POST['pickupDelivery'] === 'delivery' && $total < 2000) {
+    //     $deliveryFee = 50.00;
+    // }
+
     $deliveryFee = 0;
-    if ($total < 2000) {
-        $deliveryFee = 50.00; 
+    if (isset($_POST['pickupDelivery']) && $_POST['pickupDelivery'] === 'delivery' && $total < 2000) {
+        $deliveryFee = 50.00;
     }
 
     $total += $deliveryFee;
-    } else {
-        header("Location: cart-view.php");
-        exit();
-    }
+} else {
+    header("Location: cart-view.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,11 +64,10 @@ if(isset($_POST['selectedItems'])) {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display+swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://kit.fontawesome.com/a1e3091ba9.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./scss/style.scss">
 <style>
-body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
+form {
+    min-height: calc(100% - 255px);
 }
 table {
     width: 80%;
@@ -68,43 +80,6 @@ th, td {
     border-top: 3px solid red;
     text-align: Center;
     background-color: #cfcfcf;
-}
-.navbar{
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    /* border: 2px solid black */
-}
-nav{
-    flex: 1;
-    text-align: center;
-    font-size: 20px;
-}
-nav ul{
-    display: inline-block;
-    list-style-type: none;
-    
-}
-nav ul li{
-    display: inline-block;
-    margin-right: 20px;
-    font-size: bold;
-}
-a{
-    text-decoration: none;
-    color: #000000;
-    font-weight: bold;
-}
-.form-control {
-    width: 20px;
-}
-img.icon {
-    margin: 0 20px;
-}
-i.fa-solid.fa-user {
-    font-size: 28px;
-    margin-right: 10px;
-    color: black;
 }
 button {
     background-color: #ff4f00;
@@ -141,87 +116,37 @@ input[type="radio"]:checked {
     background-color: #000;
 }
 
-
-footer {
-    /* border: 5px solid #000000; */
-    width: 100%;
-}   
-.footer-col-1 img {
-    width: 180px;
-    bottom: 20px;
-}
-.footer-col-2{
-    text-align: center;
-    font-weight: bold;
-}
-.row {
-    display: flex; 
-    justify-content: space-evenly;
-}
-.menu-icon{
-    width: 30px;
-    margin-left: 20px;
-    display: none;
-}
-/*--media qyuery for menu---*/
-
-@media only screen and (max-width: 800px){
-    nav ul{
-        position: absolute;
-        top: 70px;
-        left: 0;
-        background: #e4b8b8;
-        width: 100%;
-        overflow: hidden;
-        transition: max-height 0.5s;
-    }
-    nav ul li{
-        display: block;
-        margin-right: 50px;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-    nav ul li a{
-        color: #000000;
-        font-weight: bold;
-    }
-    .menu-icon{
-        display: block;
-        cursor: pointer;
-    }
-}
-
-/* media query for less than 600 screen size */
-@media only screen and (max-width: 600px){
-    .row{
-        text-align: center;
-    }
-    .col-2, .col-3, .col-4{
-        flex-basis: 100%;
-    }
-}
 </style>
 </head>
 <div class="navbar">
     <div class="logo">
-        <img src="images/Logo.png" width="125">
+        <a href="http://localhost/E-commerce/customer_dash.php">
+            <img src="images/Logo.png" width="125">
+        </a>
     </div>
-    <nav>
-    <ul id="MenuItems">
+    <nav id="menuItems">
+    <ul>
         <li><a href="http://localhost/E-commerce/customer_dash.php">Home</a></li>
-        <li><a href="">Products</a></li>
-        <li><a href="">My Orders</a></li>
+        <li><a href="products.php">Products</a></li>
+        <li><a href="http://localhost/E-commerce/my_orders.php">My Orders</a></li>
         <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
     </ul>
     </nav>
-    <a href="http://localhost/E-commerce/Account.php">
-    <i class="fa-solid fa-user"></i>
-    <!-- <img src="images/profile-icon.png" width="30px" height="30px" class="icon"> -->
-    </a>
-    <img src="images/cart.png" width="30px" height="30px">
-    <img src="images/menu.png" class="menu-icon" onclick="menutoggle()">
-</div>
 
+    <div class="setting-sec">
+        <a href="http://localhost/E-commerce/Account.php">
+            <i class="fa-solid fa-user"></i>
+            <!-- <img src="images/profile-icon.png" width="30px" height="30px" class="icon"> -->
+        </a>
+        <div class="cart-sec">
+            <a href="http://localhost/E-commerce/cart-view.php">
+                <span class="cart-count"><?php echo $cart_count; ?></span>
+                <img src="images/cart.png" width="30px" height="30px">
+            </a>
+        </div>
+        <img src="images/menu.png" class="menu-icon" onclick="menutoggle()">
+    </div>
+</div>
 <body>
 <form action="place-order.php" method="POST">
     <table>
@@ -292,32 +217,40 @@ footer {
     </div>
     </footer>
 <script>
-    var MenuItems = document.getElementById("MenuItems");
-    
-    MenuItems.style.maxHeight = "0px";
-
+     var menuItems = document.getElementById("menuItems");
     function menutoggle() {
-        if (MenuItems.style.maxHeight =="0px")
-        {
-            MenuItems.style.maxHeight = "300px";
-        }
-        else{
-            MenuItems.style.maxHeight = "0px";
-        }
+        menuItems.classList.toggle("show");
     }
 
     var deliveryOption = document.querySelectorAll('input[name="pickupDelivery"]');
     var deliveryFeeRow = document.getElementById('deliveryFeeRow');
 
+    // deliveryOption.forEach(function(option) {
+    //     option.addEventListener('change', function() {
+    //         if (option.value === 'delivery') {
+    //             deliveryFeeRow.style.display = 'table-row'; 
+    //         } else {
+    //             deliveryFeeRow.style.display = 'none'; 
+    //         }
+    //     });
+    // });
+
     deliveryOption.forEach(function(option) {
-        option.addEventListener('change', function() {
-            if (option.value === 'delivery') {
-                deliveryFeeRow.style.display = 'table-row'; 
-            } else {
-                deliveryFeeRow.style.display = 'none'; 
-            }
-        });
+    option.addEventListener('change', function() {
+        let deliveryFee = 0;
+        let originalTotal = parseFloat(document.getElementById('total').textContent.replace(/,/g, ''));
+        
+        if (option.value === 'delivery' && originalTotal < 2000) {
+            deliveryFee = 50.00;
+            deliveryFeeRow.style.display = 'table-row'; 
+        } else {
+            deliveryFeeRow.style.display = 'table-row'; 
+        }
+
+        document.getElementById('deliveryFee').textContent = deliveryFee.toFixed(2);
+        document.getElementById('total').textContent = (originalTotal + deliveryFee).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     });
+});
 </script>
 
 </body>

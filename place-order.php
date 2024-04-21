@@ -11,16 +11,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $userId = $_SESSION['user_id'];
      
-        $stmt = $pdo->prepare("SELECT address_id FROM users WHERE user_id = ?");
+        $stmt = $pdo->prepare("SELECT address_id, role FROM users WHERE user_id = ?");
         $stmt->execute([$userId]);
-        $address = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$address) {
+        // $address = $stmt->fetch(PDO::FETCH_ASSOC);
+        $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+        // if (!$address) {
+        if (!$userData) {
             header("Location: add-address.php");
             exit();
         }
 
-        $addressId = $address['address_id'];
+        $addressId = $userData['address_id'];
+        $userRole = $userData['role'];
 
         $pdo->beginTransaction();
 
@@ -29,11 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $order_status = 'Pending';
             $deliveryOption = $_POST['pickupDelivery'];
             $stmt = $pdo->prepare("INSERT INTO orders (date_ordered, order_status, user_id, address_id, delivery_option) VALUES (?, ?, ?, ?, ?)");
-            // $stmt = $pdo->prepare("INSERT INTO orders (date_ordered, order_status, user_id, address_id) VALUES (?, ?, ?, ?)");
             $stmt->execute([$dateOrdered, $order_status, $userId, $addressId, $deliveryOption]);
-            // $stmt->execute([$dateOrdered, $order_status, $userId, $addressId]);
             $orderId = $pdo->lastInsertId();
-            var_dump($_POST['pickupDelivery']);
+          
             $totalPrice = 0;
             foreach ($selectedItems as $index => $itemId) {
                 $stmt = $pdo->prepare("SELECT discounted_price, retail_price, stock FROM products WHERE product_id = ?");
@@ -41,8 +41,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $product = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 if ($product) {
-                     // price based on qty
-                    $price = ($selectedQuantities[$index] <= 2) ? $product['retail_price'] : $product['discounted_price'];
+                     // price based on role
+                     $price = ($userRole === 'Retail_Customer') ? $product['retail_price'] : $product['discounted_price'];
 
                     // Fetch the quantity of the item
                     $quantity = $selectedQuantities[$index];
@@ -67,16 +67,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     throw new Exception("Product details not found for product ID: $itemId");
                 }
             }
-            // if (array_sum($selectedQuantities) <= 2) {
-            //     $deliveryFee = 50.00; 
-            //     $totalPrice += $deliveryFee;
-            // }
-
-             // Calculate delivery fee only if the delivery option is not "Pickup"
-             if ($deliveryOption !== "pickup") {
-                $deliveryFee = 50.00; 
-                $totalPrice += $deliveryFee;
+           
+            // Calculate delivery fee
+            $deliveryFee = 0;
+            if ($deliveryOption === 'delivery' && $totalPrice < 2000){
+                $deliveryFee = 50.00;
             }
+            $totalPrice += $deliveryFee;
             
             $stmt = $pdo->prepare("UPDATE orders SET total_price = ? WHERE order_id = ?");
             $stmt->execute([$totalPrice, $orderId]);

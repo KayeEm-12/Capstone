@@ -1,6 +1,5 @@
 <?php
-require 'DB/db_con.php';
-
+require '../DB/db_con.php';
 try {
     $sql = "SELECT o.order_id, o.order_status, u.first_name, a.barangay, a.street
     FROM orders o
@@ -24,11 +23,11 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Dashboard</title>
+    <title>Manage Order</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display+swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/a1e3091ba9.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="./scss/style.scss">
+    <link rel="stylesheet" href="../scss/style.scss">
 </head>
 <style>
 .order-container{
@@ -146,27 +145,29 @@ button {
   }
 </style>
 <body>
-
-    <div class="staff-container">
-        <div class="navbar">
-            <div class="logo">
-            <img src="images/Logo.png" class= "pic" width="125">
-            </div>
-            <nav id="menuItems">
-                <ul>
-                    <li><a href="staff_dash.php">Dashboards</a></li>
-                    <!-- <li><a href="staff_view_order.php">View Orders</a></li> -->
-                    <li><a href="">Products</a></li>
-                </ul>
-                </nav>
-                
-            <div class="setting-sec">
-                <a href="http://localhost/E-commerce/Account.php">
-                <i class="fa-solid fa-user"></i>
-                <!-- <img src="images/profile-icon.png" width="30px" height="30px" class="icon"> -->
-                </a>
-                <img src="images/menu.png" class="menu-icon" onclick="menutoggle()">
-            </div>
+    <div class="navbar">
+        <div class="logo">
+            <a href="http://localhost/E-commerce/admin/admin_dash.php">
+                <img src="../images/Logo.png" width="125">
+            </a>
+        </div>
+        <nav id="menuItems">
+        <ul>
+        <li><a href="http://localhost/E-commerce/admin/admin_dash.php">Dashboards</a></li>
+            <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
+            <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
+            <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
+            <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>
+            <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
+            <!-- <li><a href="http://localhost/E-commerce/Account.php">Account</a></li> -->
+        </ul>
+        </nav>
+        <div class="setting-sec">
+            <a href="http://localhost/E-commerce/Account.php">
+            <i class="fa-solid fa-user"></i>
+            <!-- <img src="../images/profile-icon.png" width="30px" height="30px" class="icon"> -->
+            </a>
+        <img src="../images/menu.png" class="menu-icon" onclick="menutoggle()">
         </div>
     </div>
 
@@ -257,19 +258,20 @@ button {
                             </td>
                             <td><?php echo $order['order_status']; ?></td>
                             <td>
-                                <a href="staff_view_order.php?order_id=<?php echo $order['order_id']; ?>"><button class="view-button" data-id="<?php echo $order['order_id']; ?>">View</button></a>
+                                <a href="http://localhost/E-commerce/admin/view-order.php?order_id=<?php echo $order['order_id']; ?>"><button class="view-button" data-id="<?php echo $order['order_id']; ?>">View</button></a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 </table>
             </div>
+        </div>
     </div>
 <!--footer-->
 <footer>
     <div class="container">
         <div class="row">
             <div class="footer-col-1">
-            <img src="images/logo2.png" width="100px" height="60px">
+            <img src="../images/logo2.png" width="100px" height="60px">
             </div>
             <div class="footer-col-2">
             <p>&copy; <?php echo date('Y'); ?> 4M Minimart Online Store. All rights reserved.</p>
@@ -288,55 +290,55 @@ var menuItems = document.getElementById("menuItems");
 
 
 <script>
-       $(document).ready(function() {
+    $(document).ready(function() {
 
-            function fetchEventDetails(status) {
-                if (status) {
-                    $.ajax({
-                        url: 'user-order_fetch.php',
-                        type: 'GET',
-                        data: { status: status },
-                        success: function(response) {
-                            $('#ordersTable tbody').html(response);
-                        },
-                        error: function() {
-                            console.log('Error occurred while fetching order details.');
-                        }
-                    });
-                }
-            }
-
-            // Function to fetch and update user counts
-            function fetchEventCounts() {
+        function fetchEventDetails(status) {
+            if (status) {
                 $.ajax({
-                    url: 'order_filtering.php',
+                    url: 'user-order_fetch.php',
                     type: 'GET',
-                    dataType: 'json',
+                    data: { status: status },
                     success: function(response) {
-                        $('.pending-orders-count').text(response.Pending);
-                        $('.toShip-orders-count').text(response.ToShip);
-                        $('.toReceive-orders-count').text(response.ToReceive); 
-                        $('.completed-orders-count').text(response.Completed);
+                        $('#ordersTable tbody').html(response);
                     },
                     error: function() {
-                        console.log('Error occurred while fetching order counts.');
+                        console.log('Error occurred while fetching order details.');
                     }
                 });
             }
+        }
 
-
-            // for "More Info" buttons
-            $('.small-box-1').click(function() {
-                var status = $(this).data('status');
-                fetchEventDetails(status);
+        // Function to fetch and update user counts
+        function fetchEventCounts() {
+            $.ajax({
+                url: 'order_filtering.php',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    $('.pending-orders-count').text(response.Pending);
+                    $('.toShip-orders-count').text(response.ToShip);
+                    $('.toReceive-orders-count').text(response.ToReceive); 
+                    $('.completed-orders-count').text(response.Completed);
+                },
+                error: function() {
+                    console.log('Error occurred while fetching order counts.');
+                }
             });
+        }
 
-            // Initial fetch for user counts
-            fetchEventCounts();
 
+        // for "More Info" buttons
+        $('.small-box-1').click(function() {
+            var status = $(this).data('status');
+            fetchEventDetails(status);
         });
 
-    </script>
+        // Initial fetch for user counts
+        fetchEventCounts();
+
+    });
+
+</script>
 
 </html>
 </body>

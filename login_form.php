@@ -110,7 +110,9 @@
 <body>
 <div class="container">
     <div class="logo">
-        <img src="images/Logo.png" alt="Logo">
+        <a href="login_form.php">
+            <img src="images/Logo.png" alt="Logo">
+        </a>
     </div>
     <div class="login-form" id="loginForm">
         <h2>Login</h2>

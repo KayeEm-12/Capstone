@@ -4,7 +4,7 @@ try {
     $sql = "SELECT *
             FROM users 
             INNER JOIN address ON users.address_id = address.address_id
-            WHERE role = 'Customer'";
+            WHERE role IN ('Retail_customer', 'Wholesale_Customer')";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -13,6 +13,7 @@ try {
 } catch (Exception $e) {
     die("Error: " . $e->getMessage());
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,9 +26,9 @@ try {
     <script src="https://kit.fontawesome.com/a1e3091ba9.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../scss/style.scss">
    <style>
-   .user-container{
-    min-height: 60vh;
-   }
+    .user-container {
+        min-height: calc(100% - 255px);
+    }
     a{
         text-decoration: none;
         color: #000000;
@@ -54,11 +55,9 @@ try {
     tr:hover {
         background-color: #ddd;
     }
-    .edit-button,
-    .btn-add, .btn-close {
-        display: inline-flex;
-        align-items: center;
-        padding: 8px 12px;
+    .edit-button, .btn-close {
+        display: table-cell;
+        padding: 5px 10px;
         border-radius: 4px;
         text-decoration: none;
         margin-right: 5px;
@@ -68,13 +67,6 @@ try {
         color: white;
     }
     .edit-button:hover {
-        background-color: crimson;
-    }
-    .btn-add{
-        background-color: #e4b8b8;
-        padding: 2px 10px;
-    }
-    .btn-add:hover{
         background-color: crimson;
     }
     .btn-close {
@@ -119,7 +111,7 @@ try {
         <nav id="menuItems">
         <ul>
         <li><a href="http://localhost/E-commerce/admin/admin_dash.php">Dashboards</a></li>
-            <li><a href="http://localhost/E-commerce/admin/view_order.php">Manage Orders</a></li>
+            <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
             <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
             <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
             <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>
@@ -146,7 +138,7 @@ try {
 
 <div class="user-container">
     <h2 style="text-align: center;">Users</h2>
-    <a href="http://localhost/E-commerce/admin/admin_dash.php"  class="btn-close" ><i class="fa fa-close"></i> Close</a>
+    <!-- <a href="http://localhost/E-commerce/admin/admin_dash.php"  class="btn-close" ><i class="fa fa-close"></i> Close</a> -->
     <table>
         <tr>
             <th>Name</th>
@@ -154,6 +146,7 @@ try {
             <th>Phone Number</th>
             <th>Street</th>
             <th>Barangay</th>
+            <th>Role</th>
             <th>Action</th>
         </tr>
         <?php foreach ($users as $customer) : ?>
@@ -163,9 +156,11 @@ try {
                 <td><?php echo $customer['phone_number']; ?></td>
                 <td><?php echo $customer['street']; ?></td>
                 <td><?php echo $customer['barangay']; ?></td>
-                <td><a href="http://localhost/E-commerce/admin/view_user_order.php?user_id=<?php echo $customer['user_id']; ?>" class="edit-button"><i class="fa fa-edit"></i>View</a></td>
-
- 
+                <td><?php echo $customer['role']; ?></td>
+                <td>
+                    <a href="http://localhost/E-commerce/admin/view_user_order.php?user_id=<?php echo $customer['user_id']; ?>" class="edit-button" style="margin-right: 10px;"><i class="fa fa-edit"></i> View</a>
+                    <a href="http://localhost/E-commerce/admin/upgrade_user.php?user_id=<?php echo $customer['user_id']; ?>" class="edit-button"><i class="fa fa-edit"></i> Upgrade</a>
+                </td>
             </tr>
         <?php endforeach; ?>
     </table>
