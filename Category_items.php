@@ -7,13 +7,15 @@ if(isset($_POST['categoryId'])) {
 
     try {
         if ($category == 0) {
-            $sql = "SELECT products.*, category.category_name
-                    FROM products
-                    INNER JOIN category ON products.category_id = category.category_id";
-        } else {
-            $sql = "SELECT products.*, category.category_name
+            $sql = "SELECT products.*, product_variations.discounted_price, product_variations.retail_price, product_variations.variation_type, category.category_name
                     FROM products
                     INNER JOIN category ON products.category_id = category.category_id
+                    LEFT JOIN product_variations ON products.product_id = product_variations.product_id";
+        } else {
+            $sql = "SELECT products.*, product_variations.discounted_price, product_variations.retail_price, product_variations.variation_type, category.category_name
+                    FROM products
+                    INNER JOIN category ON products.category_id = category.category_id
+                    LEFT JOIN product_variations ON products.product_id = product_variations.product_id
                     WHERE products.category_id = :category";
         }
 
@@ -53,10 +55,12 @@ if(isset($_POST['categoryId'])) {
             // echo '<p>Regular Retail Price: ₱ ' . number_format($product['retail_price'], 2) . '</p>';
 
             if (isset($_SESSION['role']) && $_SESSION['role'] == 'Wholesale_Customer') {
-                echo '<p>Discounted Price: ₱' . number_format($product['discounted_price'], 2) . '</p>';
+                echo '<p>Price: ₱' . number_format($product['discounted_price'], 2) . '</p>';
             } else {
-                echo '<p>Regular Retail Price: ₱' . number_format($product['retail_price'], 2) . '</p>';
+                echo '<p>Price: ₱' . number_format($product['retail_price'], 2) . '</p>';
             }
+            
+            echo '<p>Variation Type: ' . ucfirst(str_replace('_', ' ', $product['variation_type'])) . '</p>';
             echo '<p>Stock: ' . number_format($product['stock']) . '</p>';
             echo '</div>';
         }

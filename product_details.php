@@ -1,6 +1,4 @@
 <?php
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
 require 'DB/db_con.php';
 require 'count-cart.php';
 
@@ -10,15 +8,25 @@ if (isset($_GET['product_id']) && is_numeric($_GET['product_id'])) {
     $product_id = $_GET['product_id'];
     $quantity = isset($_GET['quantity']) ? $_GET['quantity'] : 1;
 
-    $sql = "SELECT * FROM products 
+    $sql = "SELECT products.*, category.category_name, product_variations.discounted_price, product_variations.retail_price, product_variations.variation_type
+    FROM products 
     INNER JOIN category ON products.category_id = category.category_id
+    LEFT JOIN product_variations ON products.product_id = product_variations.product_id
     WHERE products.product_id = ?";
 
     $stmt = $pdo->prepare($sql);
-
     $stmt->execute([$product_id]);
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
 }
+
+$reviews_sql = "SELECT ratings.*, users.username
+                FROM ratings 
+                INNER JOIN users ON ratings.user_id = users.user_id 
+                WHERE ratings.order_id IN (SELECT order_id FROM orders_details WHERE product_id = ?)";
+$reviews_stmt = $pdo->prepare($reviews_sql);
+$reviews_stmt->execute([$product_id]);
+$reviews = $reviews_stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -70,15 +78,14 @@ if (isset($_GET['product_id']) && is_numeric($_GET['product_id'])) {
         <div class="product-item">
             <?php if ($product !== null): ?>
                 <img src="images/upload/<?php echo $product['photo']; ?>" alt="Product Photo" class="prod-img">
-            
                 <h3 style="text-align: center;"><?php echo $product['prod_name']; ?></h3>
+                
                 <?php
-                    // Check if user is logged in and role is 'Wholesale'
                     if (isset($_SESSION['role']) && $_SESSION['role'] == 'Wholesale_Customer'):
                 ?>
-                <p>Discounted Price: ₱ <?php echo number_format($product['discounted_price'], 2); ?></p>
+                <p>Price: ₱ <?php echo number_format($product['discounted_price'], 2); ?></p>
                 <?php else: ?>
-                    <p>Regular Retail Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
+                    <p>Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
                 <?php endif; ?>
                 <p>Stock: <span id="stock"><?php echo number_format($product['stock']); ?></span></p>
                 
@@ -98,12 +105,31 @@ if (isset($_GET['product_id']) && is_numeric($_GET['product_id'])) {
                     <i class="fa fa-cart-arrow-down"></i> Add To Cart
                 </button>
 
-                <a href="http://localhost/E-commerce/customer_dash.php?product_id=<?php echo $product['product_id']; ?>" class="back">
+                <a href="http://localhost/E-commerce/customer_dash.php" class="back">
                     <i class="fa fa-arrow-left"></i> Back
                 </a>
-                <?php else: ?>
-                    <p>Product not found</p>
-                <?php endif; ?>
+            <?php else: ?>
+                <p>Product not found</p>
+            <?php endif; ?>
+        </div>
+
+        <div class="product-reviews">
+            <h4>Product Reviews</h4>
+            <?php if (count($reviews) > 0): ?>
+                <ul>
+                    <?php foreach ($reviews as $review): ?>
+                        <li>
+                            <div class="review-user">
+                                <span><?php echo $review['username']; ?></span>
+                            </div>
+                            <div class="review-rating">Rating: <?php echo $review['rating_value']; ?></div>
+                            <div class="review-comment">Comment: <?php echo $review['feedback']; ?></div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <p>No reviews for this product yet.</p>
+            <?php endif; ?>
         </div>
     </div>
 

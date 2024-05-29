@@ -1,4 +1,8 @@
 <?php
+function formatDate($date) {
+    return date('M d, Y', strtotime($date));
+}
+
 require '../DB/db_con.php';
 // Pagination settings
 $limit = 10; // Number of products per page
@@ -9,11 +13,14 @@ $start = ($page - 1) * $limit;
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 
 try {
-    $sql = "SELECT products.*, category.category_name
-    FROM products
-    INNER JOIN category ON products.category_id = category.category_id
-    WHERE products.prod_name LIKE :search
-    LIMIT :start, :limit";
+    $sql = "SELECT products.*, category.category_name, product_variations.discounted_price, 
+            product_variations.retail_price, product_variations.variation_type
+        FROM products
+        INNER JOIN category ON products.category_id = category.category_id
+        LEFT JOIN product_variations ON products.product_id = product_variations.product_id
+        WHERE products.prod_name LIKE :search
+        LIMIT :start, :limit";
+
 $stmt = $pdo->prepare($sql);
 $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
 $stmt->bindValue(':start', $start, PDO::PARAM_INT);
@@ -66,6 +73,30 @@ die("Error: " . $e->getMessage());
     <script src="https://kit.fontawesome.com/a1e3091ba9.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../scss/style.scss">
    <style>
+    .navbar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+    }
+    nav#menuItems ul li a:hover {
+        color: red;
+    }
+    nav#menuItems ul li a.active {
+        color: red;
+    }
+    .prod-container {
+    margin-top: 15rem;
+}
+    .cat-search-con{
+        position: fixed;
+        top: 7rem;
+        right: 0;
+        left: 0;
+        background: #d9d9d9;
+        border-top: 1px solid black;
+        padding: 10px;
+    }
     a{
     text-decoration: none;
     color: #000000;
@@ -102,22 +133,22 @@ die("Error: " . $e->getMessage());
         margin-right: 5px;
     }
     .edit-button {
-        background-color: #ff523b;
+        background-color: #cf9292;
         color: white;
     }
     .edit-button:hover {
-        background-color: crimson;
+        background-color: #2ecc71;
     }
     .btn-add{
-        background-color: #e4b8b8;
+        background-color: #cf9292;
         padding: 2px 10px;
         margin-left:70px;
     }
     .btn-add:hover{
-        background-color: crimson;
+        background-color: #2ecc71;
     }
     .btn-close {
-        background-color: #e4b8b8;
+        background-color: #cf9292;
         padding: 2px 10px;
     }
     label.search {
@@ -190,8 +221,10 @@ die("Error: " . $e->getMessage());
         <nav id="menuItems">
         <ul>
         <li><a href="http://localhost/E-commerce/admin/admin_dash.php">Dashboards</a></li>
+        <li><a href="http://localhost/E-commerce/admin/reports.php">Reports</a></li>
             <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
             <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
+            <li><a href="http://localhost/E-commerce/admin/promo.php">Promo</a></li>
             <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
             <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>
             <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
@@ -206,38 +239,38 @@ die("Error: " . $e->getMessage());
         <img src="../images/menu.png" class="menu-icon" onclick="menutoggle()">
         </div>
     </div>
-<div class="container">
-    <h2 style="text-align: center;">Products</h2>
-    <a href="http://localhost/E-commerce/admin/add-product.php" class="btn-add"> <i class="fa fa-plus"></i>New</a>
-    <label>Category: </label>
-    <select class="form-control input-sm" id="select_category">
-        <option value="0">ALL</option>
-        <?php
-        include '../DB/db_con.php';
+<div class="prod-container">
+    <div class="cat-search-con">
+        <!-- <h2 style="text-align: center;">Products</h2> -->
+        <a href="http://localhost/E-commerce/admin/add-product.php" class="btn-add"> <i class="fa fa-plus"></i>New</a>
+        <label>Category: </label>
+        <select class="form-control input-sm" id="select_category">
+            <option value="0">ALL</option>
+            <?php
+            include '../DB/db_con.php';
 
-        $query = "SELECT category_id, category_name FROM category";
-        $result = $pdo->query($query);
+            $query = "SELECT category_id, category_name FROM category";
+            $result = $pdo->query($query);
 
-        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-            echo '<option value="' . $row['category_id'] . '">' . $row['category_name'] . '</option>';
-        }
-        ?>
-    </select>
-    <form class="search" method="GET" action="">
-        <input type="text"  class="form-control" name="search" placeholder="Search products..." value="<?php echo $search; ?>">
-        <button type="submit" class="btn btn-sucess">Search</button>
-    </form>
-    <a href="http://localhost/E-commerce/admin/admin_dash.php"  class="btn-close" ><i class="fa fa-close"></i> Close</a>
-
+            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                echo '<option value="' . $row['category_id'] . '">' . $row['category_name'] . '</option>';
+            }
+            ?>
+        </select>
+        <form class="search" method="GET" action="">
+            <input type="text"  class="form-control" name="search" placeholder="Search products..." value="<?php echo $search; ?>">
+            <button type="submit" class="btn btn-sucess">Search</button>
+        </form>
+        <a href="http://localhost/E-commerce/admin/admin_dash.php"  class="btn-close" ><i class="fa fa-close"></i> Close</a>
+    </div>
     <table>
         <tr>
             <th>Product Name</th>
-            <!-- <th>Type Code</th> -->
+            <th>Variation Type</th>
             <th>Discounted Price</th>
             <th>Retail Price</th>
             <th>Description</th>
-            <!-- <th>Category</th>  -->
-            <!-- <th>Stock</th> -->
+            <th>Expiration Date</th>
             <th>Photo</th>
             <th>Action</th>
         </tr>
@@ -245,11 +278,13 @@ die("Error: " . $e->getMessage());
             <tr>
                 <td><?php echo $product['prod_name']; ?></td>
                 <!-- <td><?php echo $product['type_code']; ?></td> -->
+                <td><?php echo $product['variation_type']; ?></td>
                 <td><?php echo $product['discounted_price']; ?></td>
                 <td><?php echo $product['retail_price']; ?></td>
                 <td><?php echo $product['prod_desc']; ?></td>
                 <!-- <td><?php echo $product['category_name']; ?></td> -->
                 <!-- <td><?php echo $product['stock']; ?></td> -->
+                <td><?php echo $product['expiration_date']; ?></td>
                 <td><img src="../images/upload/<?php echo $product['photo']; ?>" alt="Product Photo" style="max-width: 100px; max-height: 100px;"></td>
                 <td><a href="http://localhost/E-commerce/admin/edit-prod.php?product_id=<?php echo $product['product_id']; ?>" class="edit-button"><i class="fa fa-edit"></i>Edit</a></td>
 

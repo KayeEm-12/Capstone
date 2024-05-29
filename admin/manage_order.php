@@ -1,12 +1,16 @@
 <?php
 require '../DB/db_con.php';
-try {
+try {       
+    $currentDate = date('Y-m-d');
     $sql = "SELECT o.order_id, o.order_status, u.first_name, a.barangay, a.street
-    FROM orders o
-    INNER JOIN users u ON o.user_id = u.user_id
-    INNER JOIN address a ON o.address_id = a.address_id";
-    
+            FROM orders o
+            INNER JOIN users u ON o.user_id = u.user_id
+            INNER JOIN address a ON o.address_id = a.address_id
+            WHERE DATE(o.date_ordered) = :currentDate
+            AND o.order_status = 'Completed'"; 
+
     $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':currentDate', $currentDate); 
     $stmt->execute();
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -70,7 +74,11 @@ tr:nth-child(even) {
 tr:hover {
     background-color: #ddd;
 }
-button {
+i.fa-solid.fa-eye {
+    color: black;
+    font-size: 20px;
+}
+/* button {
     background-color: #f05d5d;
     color: #080808;
     padding: 5px 10px;
@@ -78,8 +86,11 @@ button {
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
+} */
+.small-box-1:hover{
+    transform: scale(1.05); 
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
 }
-
 .order-container{
     .container{
       max-width: 100%;
@@ -101,19 +112,18 @@ button {
           gap: 5rem;
           
           .small-box-1 {
-            background: #81d381;
             padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 0px 10px #4d0202;
             border-radius: 5px;
             margin-bottom: 20px;
             &:nth-child(1) {
-              background-color: rgb(76, 245, 61);
+                box-shadow: 0px 0px 10px #4d0202;
             }
             &:nth-child(2) {
-              background-color: rgb(20, 122, 239);
+                box-shadow: 0px 0px 10px #4d0202;
             }
             &:nth-child(3) {
-              background-color: rgb(233, 236, 31);
+                box-shadow: 0px 0px 10px #4d0202;
             }
             .badge{
               display: flex;
@@ -154,8 +164,10 @@ button {
         <nav id="menuItems">
         <ul>
         <li><a href="http://localhost/E-commerce/admin/admin_dash.php">Dashboards</a></li>
+        <li><a href="http://localhost/E-commerce/admin/reports.php">Reports</a></li>
             <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
             <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
+            <li><a href="http://localhost/E-commerce/admin/promo.php">Promo</a></li>
             <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
             <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>
             <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
@@ -179,7 +191,7 @@ button {
                     <div class="small-box-1" data-status="Pending">
                         <div class="badge">
                             <div class="icon">
-                                <i class="fa-solid fa-users"></i>
+                                <i class="fas fa-hourglass-start"></i>
                             </div>
                             <div class="inner">
                                 <h3 class="pending-orders-count">0</h3>
@@ -193,7 +205,7 @@ button {
                     <div class="small-box-1" data-status="ToShip">
                         <div class="badge">
                             <div class="icon">
-                                <i class="fa-solid fa-users-gear"></i>
+                                <i class="fas fa-truck"></i>
                             </div>
                             <div class="inner">
                                 <h3 class="toShip-orders-count">0</h3>
@@ -207,7 +219,7 @@ button {
                     <div class="small-box-1" data-status="ToReceive">
                         <div class="badge">
                             <div class="icon">
-                                <i class="fa-solid fa-users-slash"></i>
+                                <i class="fas fa-truck-loading"></i>
                             </div>
                             <div class="inner">
                                 <h3 class="toReceive-orders-count">0</h3>
@@ -221,7 +233,7 @@ button {
                     <div class="small-box-1" data-status="Completed">
                         <div class="badge">
                             <div class="icon">
-                                <i class="fa-solid fa-users-slash"></i>
+                                <i class="fas fa-check-circle"></i>
                             </div>
                             <div class="inner">
                                 <h3 class="completed-orders-count">0</h3>
@@ -258,7 +270,9 @@ button {
                             </td>
                             <td><?php echo $order['order_status']; ?></td>
                             <td>
-                                <a href="http://localhost/E-commerce/admin/view-order.php?order_id=<?php echo $order['order_id']; ?>"><button class="view-button" data-id="<?php echo $order['order_id']; ?>">View</button></a>
+                                <a href="http://localhost/E-commerce/admin/view-order.php?order_id=<?php echo $order['order_id']; ?>">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -307,7 +321,7 @@ var menuItems = document.getElementById("menuItems");
                 });
             }
         }
-
+        
         // Function to fetch and update user counts
         function fetchEventCounts() {
             $.ajax({

@@ -125,12 +125,13 @@ if(isset($_GET['user_id'])) {
         <nav id="menuItems">
         <ul>
         <li><a href="http://localhost/E-commerce/admin/admin_dash.php">Dashboards</a></li>
+        <li><a href="http://localhost/E-commerce/admin/reports.php">Reports</a></li>
             <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
             <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
+            <li><a href="http://localhost/E-commerce/admin/promo.php">Promo</a></li>
             <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
             <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>
             <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
-            <!-- <li><a href="http://localhost/E-commerce/Account.php">Account</a></li> -->
         </ul>
         </nav>
         <div class="setting-sec">

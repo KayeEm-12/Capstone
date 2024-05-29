@@ -36,7 +36,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           
             $totalPrice = 0;
             foreach ($selectedItems as $index => $itemId) {
-                $stmt = $pdo->prepare("SELECT discounted_price, retail_price, stock FROM products WHERE product_id = ?");
+               // $stmt = $pdo->prepare("SELECT discounted_price, retail_price, stock FROM products WHERE product_id = ?");
+               $stmt = $pdo->prepare("SELECT product_variations.discounted_price, product_variations.retail_price, products.stock FROM products
+                                        INNER JOIN product_variations ON products.product_id = product_variations.product_id 
+                                        WHERE products.product_id = ?");
                 $stmt->execute([$itemId]);
                 $product = $stmt->fetch(PDO::FETCH_ASSOC);
                 

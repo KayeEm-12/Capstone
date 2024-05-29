@@ -25,8 +25,9 @@ if (isset($_GET['status'])) {
             echo "<td>" . $row['order_id'] . "</td>";
             echo "<td>" . $row['first_name'] . '<br>' . $row['barangay'] . ' - ' . '"' . $row['street'] . '"' . "</td>";
             echo "<td>" . $row['order_status'] . "</td>";
-            echo "<td><a href='staff_view_order.php?order_id=" . $row['order_id'] . "'><button class='view-button' data-id='" . $row['order_id'] . "'>View</button></a></td>";
-
+            // echo "<td><a href='staff_view_order.php?order_id=" . $row['order_id'] . "'><button class='view-button' data-id='" . $row['order_id'] . "'>View</button></a></td>";
+            echo "<td><a href='staff_view_order.php?order_id=" . $row['order_id'] . "'><i class='fa-solid fa-eye'></i></a></td>";
+           
             echo "</tr>";
         }
     } else {

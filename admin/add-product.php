@@ -80,12 +80,14 @@
         </div>
             <nav id="menuItems">
             <ul>
-                <li><a href="http://localhost/E-commerce/admin/admin_dash.php">Dashboards</a></li>
-                <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
-                <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
-                <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
-                <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>
-                <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
+            <li><a href="http://localhost/E-commerce/admin/admin_dash.php">Dashboards</a></li>
+            <li><a href="http://localhost/E-commerce/admin/reports.php">Reports</a></li>
+            <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
+            <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
+            <li><a href="http://localhost/E-commerce/admin/promo.php">Promo</a></li>
+            <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
+            <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>
+            <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
             </ul>
             </nav>
             <div class="setting-sec">
@@ -113,14 +115,20 @@
         <label for="prod_desc">Product Description:</label>
         <textarea id="prod_desc" name="prod_desc" required style="text-transform: capitalize;"></textarea>
     </div>
+    <!-- variation -->
     <div class="form-group">
-        <label for="prod_price">Discounted Price:</label>
-        <input type="number" id="discounted_price" name="discounted_price" step="0.01" required placeholder="Enter Product Discounted Price"><br>
+        <label for="variation_type">Variation Type:</label>
+        <input type="text" id="variation_type" name="variation_type[]" required placeholder="Enter Variation Type (e.g., per pcs, per case)">
     </div>
     <div class="form-group">
-        <label for="prod_price">Retail Price:</label>
-        <input type="number" id="retail_price" name="retail_price" step="0.01" required placeholder="Enter Product Retail Price"><br>
+        <label for="discounted_price">Discounted Price:</label>
+        <input type="number" id="discounted_price" name="discounted_price[]" step="0.01" required placeholder="Enter Discounted Price">
     </div>
+    <div class="form-group">
+        <label for="retail_price">Retail Price:</label>
+        <input type="number" id="retail_price" name="retail_price[]" step="0.01" required placeholder="Enter Retail Price">
+    </div>
+    <!-- end -->
     <div class="form-group">
         <label for="stock">Stock:</label>
         <input type="number" id="stock" name="stock" required placeholder="Enter Product Stock"><br>  
@@ -142,7 +150,11 @@
         </select>
         </div>
         <div class="form-group">
-        <label for="photo" class="col-sm-1 control-label">Photo</label>
+            <label for="expiration_date">Expiration Date:</label>
+            <input type="date" id="expiration_date" name="expiration_date">
+        </div>
+        <div class="form-group">
+            <label for="photo" class="col-sm-1 control-label">Photo</label>
         <div class="col-sm-5">
             <input type="file" id="photo" name="photo">
         </div>

@@ -10,7 +10,11 @@ $start = ($page - 1) * $limit;
 // Search functionality
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 
-$stmt = $pdo->prepare("SELECT product_id, prod_name, discounted_price, retail_price, photo, stock FROM products WHERE products.prod_name LIKE :search
+$stmt = $pdo->prepare("SELECT products.product_id, products.prod_name, products.photo, products.stock,
+                        product_variations.discounted_price, product_variations.retail_price, product_variations.variation_type
+                        FROM products 
+                        INNER JOIN product_variations ON products.product_id = product_variations.product_id
+                        WHERE products.prod_name LIKE :search
 LIMIT :start, :limit");
 $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
 $stmt->bindValue(':start', $start, PDO::PARAM_INT);
@@ -19,9 +23,9 @@ $stmt->execute();
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $totalProducts = $pdo->prepare("SELECT COUNT(*) FROM products WHERE prod_name LIKE :search");
-    $totalProducts->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
-    $totalProducts->execute();
-    $totalResults = $totalProducts->fetchColumn();
+$totalProducts->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+$totalProducts->execute();
+$totalResults = $totalProducts->fetchColumn();
 
 if (isset($_GET['id'])) {
     $cart_id = $_GET['id'];
@@ -54,10 +58,33 @@ if (isset($_GET['id'])) {
         }
     );
 </script>
-
 <style>
-    
-    .product-list{
+    .navbar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+    }
+    nav#menuItems ul li a:hover {
+        color: red;
+    }
+
+    nav#menuItems ul li a.active {
+        color: red;
+    }
+    .category-head {
+        margin-top: 7rem;
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        background: #d9d9d9;
+        border-top: 1px solid black;
+    }
+    .productList {
+    margin-top: 10rem;
+}
+    .product-list {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
@@ -175,10 +202,11 @@ if (isset($_GET['id'])) {
                     if (isset($_SESSION['role']) && $_SESSION['role'] == 'Wholesale_Customer'):
                     ?> 
                     <!-- <p style="text-align: center; font-weight: bold;" >"Avail 3pcs above to get Discounted price"</p> -->
-                    <p>Discounted Price: ₱ <?php echo number_format($product['discounted_price'], 2); ?></p>
+                    <p>Price: ₱ <?php echo number_format($product['discounted_price'], 2); ?></p>
                     <?php else: ?>
-                        <p>Regular Retail Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
+                        <p>Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
                     <?php endif; ?>
+                    <p>Variation Type: <?php echo ucfirst(str_replace('_', ' ', $product['variation_type'])); ?></p>
                     <p>Stock: <?php echo number_format($product['stock']); ?></p>
                 </div>
             <?php endforeach; ?>
@@ -216,30 +244,7 @@ if (isset($_GET['id'])) {
         </div>
     </div>
     </footer>
-<!-- <script>
-    function search(event) {
-        if (event.keyCode === 13) { 
-            var searchTerm = document.getElementById("search-input").value.trim();
 
-            if (searchTerm !== "") {
-                var xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function() {
-                    if (this.readyState == 4) {
-                        if (this.status == 200) {
-                            var products = JSON.parse(this.responseText);
-                            updateProductList(products);
-                        } else {
-                            console.error("Error fetching data. Status code: " + this.status);
-                        }
-                    }
-                };
-                xhr.open("POST", "search.php", true);
-                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xhr.send("search_term=" + encodeURIComponent(searchTerm));
-            }
-        }
-    }
-</script> -->
     <script>
     function showCategory(categoryId) {
         var xhr = new XMLHttpRequest();

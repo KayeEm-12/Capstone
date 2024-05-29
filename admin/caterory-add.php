@@ -1,14 +1,13 @@
 <?php
 require __DIR__ . '/../DB/db_con.php';
 
-if(isset($_POST)) {
+if(isset($_POST['category_name']) && !empty($_POST['category_name'])) {
     $category_name = $_POST['category_name'];
 
     $sql = "INSERT INTO category (category_name) VALUES (?)";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$category_name]);
-
-    if ($stmt->execute()) {
+    
+    if ($stmt->execute([$category_name])) {
         header("location: http://localhost/E-commerce/admin/category.php");
         exit();
     } else {
@@ -16,7 +15,8 @@ if(isset($_POST)) {
     }
 
     $stmt->close();
-    $conn->close();
+    
+    // Close the PDO connection
+    $pdo = null;
 }
 ?>
-

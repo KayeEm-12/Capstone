@@ -11,7 +11,15 @@ try {
             $product_id = (int)$_POST['product_id'];
             $quantity = (int)$_POST['quantity'];
 
-            $stmt = $pdo->prepare('SELECT * FROM products WHERE product_id = ?');
+            $stmt = $pdo->prepare
+            // ('SELECT * FROM products WHERE product_id = ?');
+            ('SELECT products.*, category.category_name, product_variations.discounted_price, 
+                    product_variations.retail_price, product_variations.variation_type
+                FROM products 
+                INNER JOIN category ON products.category_id = category.category_id
+                LEFT JOIN product_variations ON products.product_id = product_variations.product_id
+                WHERE products.product_id = ?');
+
             $stmt->execute([$product_id]);
             $product = $stmt->fetch(PDO::FETCH_ASSOC);
 

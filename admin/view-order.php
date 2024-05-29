@@ -56,14 +56,20 @@ if(isset($_GET['order_id'])) {
             border: 1px solid #767575;
             padding: 8px;
         }
-        button {
-            background-color: #f05d5d;
-            color: #080808;
-            padding: 5px 10px;
+        .btn {
+            display: inline-block;
+            background-color: #cf9292;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
-            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2ecc71;
         }
     </style>
 <body>
@@ -76,12 +82,13 @@ if(isset($_GET['order_id'])) {
         <nav id="menuItems">
         <ul>
         <li><a href="http://localhost/E-commerce/admin/admin_dash.php">Dashboards</a></li>
+        <li><a href="http://localhost/E-commerce/admin/reports.php">Reports</a></li>
             <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
             <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
+            <li><a href="http://localhost/E-commerce/admin/promo.php">Promo</a></li>
             <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
             <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>
             <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
-            <!-- <li><a href="http://localhost/E-commerce/Account.php">Account</a></li> -->
         </ul>
         </nav>
         <div class="setting-sec">
@@ -96,6 +103,7 @@ if(isset($_GET['order_id'])) {
     <div class="order-container">
     <?php if (!empty($orders)) : ?>
         <h2 style="text-align: center;">Order ID: <?php echo $orders[0]['order_id']; ?> - Customer: <?php echo $orders[0]['first_name'] . ' ' . $orders[0]['last_name']; ?></h2>
+        <div style="text-align: center; margin-bottom: 20px;">
     <?php endif; ?>
     
     <?php if (empty($orders)) : ?>
@@ -108,39 +116,53 @@ if(isset($_GET['order_id'])) {
             <th>Name</th>
             <th>Date Ordered</th>
             <th>Total Price</th>
-            <th>Status</th>
-            <th>Date Receive</th>
+            <!-- <th>Status</th>
+            <th>Date Receive</th> -->
             <th>Action</th>
         </tr>
         <?php foreach ($orders as $order) : ?>
             <tr>
                 <td><?php echo $order['prod_name']; ?></td>
                 <td><?php echo $order['first_name'] . ' ' . $order['last_name']; ?></td>
-                <td><?php echo $order['date_ordered']; ?></td>
+                <!-- <td><?php echo $order['date_ordered']; ?></td> -->
+                <td>
+                    <?php 
+                        $dateOrdered = new DateTime($order['date_ordered']);
+                        echo $dateOrdered->format('F j, Y g:i a');
+                    ?>
+                </td>
                 <td><?php echo $order['total_price']; ?></td>
-                <td><?php echo $order['order_status']; ?></td>
+                <!-- <td><?php echo $order['order_status']; ?></td> -->
                 <!-- <td><?php echo $order['order_status'] == 'Completed' ? ($order['date_received'] ?? 'Not received yet') : ''; ?></td> -->
-                <td><?php echo $order['order_status'] == 'Completed' ? ($order['date_received'] ?? 'Not received yet') : 'Not received yet'; ?></td>
+                <!-- <td><?php echo $order['order_status'] == 'Completed' ? ($order['date_received'] ?? 'Not received yet') : 'Not received yet'; ?></td> -->
 
         <td>
             <form action="update_order.php" method="POST">
-                    <input type="hidden" name="user_id" value="<?php echo $order['user_id']; ?>">
-                    <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
-                    <select name="status">
+                <input type="hidden" name="user_id" value="<?php echo $order['user_id']; ?>">
+                <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
+                <select name="status">
+                    <?php if ($order['order_status'] == 'Pending') : ?>
                         <option value="Pending" <?php if ($order['order_status'] == 'Pending') echo 'selected'; ?>>Pending</option>
-                        <option value="ToShip" <?php if ($order['order_status'] == 'ToShip') echo 'selected'; ?>>To Ship</option>
-                        <option value="ToReceive" <?php if ($order['order_status'] == 'ToReceive') echo 'selected'; ?>>To Receive</option>
-                        <option value="Completed" <?php if ($order['order_status'] == 'Completed') echo 'selected'; ?>>Completed</option>
-                    </select>
-
-                    <button type="submit" name="update_order">Update</button>
-                </form>
+                        <option value="ToShip">To Ship</option>
+                        <option value="ToReceive">To Receive</option>
+                    <?php elseif ($order['order_status'] == 'ToShip') : ?>
+                        <option value="ToReceive">To Receive</option>
+                        <!-- <option value="Completed">Completed</option> -->
+                    <?php elseif ($order['order_status'] == 'ToReceive') : ?>
+                        <!-- <option value="Completed">Completed</option> -->
+                    <?php endif; ?>
+                </select>
+                <button type="submit" name="update_order">
+                <i class="fa-solid fa-save"></i>
+                    <!-- <i class="fa-solid fa-sync-alt"></i>  -->
+                </button>
+            </form>
             </td>
         </td>
             </tr>
         <?php endforeach; ?>
     </table>
-
+    <a href="generate_receipt.php?order_id=<?php echo $order_id; ?>" class="btn">Generate Receipt</a>
     <?php endif; ?>
 </div>
 <!--footer-->

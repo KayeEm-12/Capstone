@@ -2,7 +2,7 @@
 require '../DB/db_con.php';
 
 try {
-    $current_date = date('Y-m-d');
+    $currentDate = date('Y-m-d');
 
     $query_pending = "SELECT COUNT(*) AS numrows FROM orders WHERE order_status = 'Pending'";
     $stmt_pending = $pdo->query($query_pending);
@@ -16,10 +16,9 @@ try {
     $stmt_toReceive = $pdo->query($query_toReceive);
     $toReceive_count = $stmt_toReceive->fetch(PDO::FETCH_ASSOC)['numrows'];
 
-    //$query_completed = "SELECT COUNT(*) AS numrows FROM orders WHERE order_status = 'Completed'";
-    $query_completed= "SELECT COUNT(*) AS numrows FROM orders WHERE order_status = 'Completed' AND DATE(completed_date) = :current_date";
-    $stmt_completed = $pdo->query($query_completed);
-    $stmt_completed->bindParam(':current_date', $current_date);
+    $query_completed = "SELECT COUNT(*) AS numrows FROM orders WHERE order_status = 'Completed' AND DATE(date_ordered) = :currentDate";
+    $stmt_completed = $pdo->prepare($query_completed);
+    $stmt_completed->bindParam(':currentDate', $currentDate);
     $stmt_completed->execute();
     $completed_count = $stmt_completed->fetch(PDO::FETCH_ASSOC)['numrows'];
 

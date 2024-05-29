@@ -11,6 +11,11 @@ if (isset($_POST['category'])) {
     } else {
         $query = $pdo->prepare("SELECT product_id, prod_name, discounted_price, retail_price, photo, stock FROM products WHERE category_id = ?");
         $query->execute([$selectedCategory]);
+        // $query = $pdo->prepare("SELECT products.product_id, products.prod_name, product_variations.discounted_price, products.photo, products.stock
+        //                  FROM products 
+        //                  INNER JOIN product_variations ON products.product_id = product_variations.product_id
+        //                  WHERE products.category_id = ?");
+        // $query->execute([$selectedCategory]);
     }
 
     $products = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -21,7 +26,7 @@ if (isset($_POST['category'])) {
         echo '<img src="images/upload/' . $product['photo'] . '" alt="Product Photo" class="prod-img">';
         echo '<h3 style="text-align: center;">' . $product['prod_name'] . '</h3>';
         if (isset($_SESSION['role']) && $_SESSION['role'] == 'Wholesale_Customer') {
-            echo '<p>Discounted Price: ₱' . number_format($product['discounted_price'], 2) . '</p>';
+            echo '<p>Price: ₱' . number_format($product['discounted_price'], 2) . '</p>';
         } else{
             echo '<p>Retail Price: ₱' . number_format($product['retail_price'], 2) . '</p>';
         }

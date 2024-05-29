@@ -26,8 +26,21 @@ try {
     <script src="https://kit.fontawesome.com/a1e3091ba9.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../scss/style.scss">
    <style>
+       .navbar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+    }
+    nav#menuItems ul li a:hover {
+        color: red;
+    }
+    nav#menuItems ul li a.active {
+        color: red;
+    }
     .user-container {
         min-height: calc(100% - 255px);
+        margin-top: 10rem;
     }
     a{
         text-decoration: none;
@@ -62,13 +75,13 @@ try {
         text-decoration: none;
         margin-right: 5px;
     }
-    .edit-button {
+    /* .edit-button {
         background-color: #ff523b;
         color: white;
     }
     .edit-button:hover {
         background-color: crimson;
-    }
+    } */
     .btn-close {
         background-color: #e4b8b8;
         padding: 2px 10px;
@@ -85,17 +98,19 @@ try {
         text-rendering: auto;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale
-    }.row1{
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-}
+    }
+    .row1{
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+    }
     .icon {
         font-size: 48px;
         color: black;
         margin-left: 60px;
     }
+    
 </style>
 </head>
 <body>
@@ -111,8 +126,10 @@ try {
         <nav id="menuItems">
         <ul>
         <li><a href="http://localhost/E-commerce/admin/admin_dash.php">Dashboards</a></li>
+        <li><a href="http://localhost/E-commerce/admin/reports.php">Reports</a></li>
             <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
             <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
+            <li><a href="http://localhost/E-commerce/admin/promo.php">Promo</a></li>
             <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
             <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>
             <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
@@ -137,7 +154,7 @@ try {
 </div>
 
 <div class="user-container">
-    <h2 style="text-align: center;">Users</h2>
+    <!-- <h2 style="text-align: center;">Users</h2> -->
     <!-- <a href="http://localhost/E-commerce/admin/admin_dash.php"  class="btn-close" ><i class="fa fa-close"></i> Close</a> -->
     <table>
         <tr>
@@ -158,8 +175,12 @@ try {
                 <td><?php echo $customer['barangay']; ?></td>
                 <td><?php echo $customer['role']; ?></td>
                 <td>
-                    <a href="http://localhost/E-commerce/admin/view_user_order.php?user_id=<?php echo $customer['user_id']; ?>" class="edit-button" style="margin-right: 10px;"><i class="fa fa-edit"></i> View</a>
-                    <a href="http://localhost/E-commerce/admin/upgrade_user.php?user_id=<?php echo $customer['user_id']; ?>" class="edit-button"><i class="fa fa-edit"></i> Upgrade</a>
+                    <a href="http://localhost/E-commerce/admin/view_user_order.php?user_id=<?php echo $customer['user_id']; ?>" class="edit-button" style="margin-right: 10px;"> 
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                    <a href="http://localhost/E-commerce/admin/upgrade_user.php?user_id=<?php echo $customer['user_id']; ?>" class="edit-button">
+                        <i class="fas fa-arrow-alt-circle-up"></i>
+                    </a>
                 </td>
             </tr>
         <?php endforeach; ?>

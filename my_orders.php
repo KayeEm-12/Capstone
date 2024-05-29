@@ -6,7 +6,7 @@ require 'DB/db_con.php';
 require 'count-cart.php';
 
 //echo "SELECT * FROM orders WHERE user_id = ".$_SESSION['user_id'];
-
+$status = ''; // Default value for status
 if (isset($_GET['id'])) {
     $cart_id = $_GET['id'];
     $query = $pdo->prepare("SELECT product_id, prod_name, prod_price, photo, stock 
@@ -47,154 +47,41 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://kit.fontawesome.com/a1e3091ba9.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="./scss/style.scss">
-    <!-- <style>
-        .order-wrapper{
-            min-height: calc(100% - 255px);
-            .order-container{
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                margin: 0 3rem;
-                min-height: calc(100vh - 239px);
-                .profile-container{
-                    width: 250px; 
-                    padding-top: 5rem;
-                    .profile{
-                        display: flex;
-                        align-items: center;
-                        flex-direction: column;
-                        img {
-                            width: 100px; 
-                            height: auto;
-                        }
-                    }
-                    .username {
-                        font-weight: bold;
-                        margin-bottom: 5px; 
-                    }
-                    .logout {
-                        text-align: center; 
-                        a {
-                            text-decoration: none;
-                            color: #000000;
-                            font-weight: bold;
-                        }
-                        a:hover {
-                            color: red;
-                        }
-                    }
-                }
-                .account{
-                    display: flex;
-                    flex-direction: column;
-                    margin-top: 1rem;
-                    margin-left: 3rem;
-                    .dropdown{
-                        margin-bottom: 10px;
-                        position: relative;
-                        img{
-                            width: 20px; 
-                            margin-right: 5px;
-                        }
-                        .dropdown-content{
-                            display: none; 
-                            /* border: 1px solid #ccc; */
-                            border-radius: 5px;
-                            padding: 10px;
-                            margin-left: 25px;
-                            a{
-                                color: black; 
-                                text-decoration: none; 
-                                padding: 5px 0; 
-                                &:hover {
-                                    color: red; 
-                                }
-                            }
-                        }
-                        &:hover .dropdown-content {
-                            display: block;
-                            color: red; 
-                        }
-                    }
-                }
-                .order-details{
-                    flex: 1;
-                    .stats{
-                        .status{
-                            flex: 1;
-                            text-align: center;
-                            font-size: 20px;
-                            margin-bottom: 1rem;
-                            margin-top: 1rem;
-                            a{
-                                text-decoration: none;
-                                color: black; 
-                                font-weight: bold;
-                                
-                            }
-                            a:hover{
-                                color: red; 
-                            }
-                            a.active{
-                                color: red; 
-                            }
-                        }                
-                    }
-                    
-                    .order{
-                        border: 1px solid #ccc;
-                        margin-bottom: 10px;
-                        padding: 50px;
-                        border: 2px solid gray;
-                        box-shadow: #555;
-                        .order-item {
-                            display: flex;
-                            align-items: center;
-                            justify-content: space-between;
-                            padding: 10px;
-                            img {
-                                width: 100px;
-                                margin-right: 10px;
-                            }
-                            .product-details {
-                                display: flex;
-                                .product-name {
-                                    font-weight: bold;
-                                }
-                                
-                            }
-                            .subtotal {
-                                margin-left: auto; 
-                                font-weight: bold;
-                            } 
-                        }
-                        .delivery-fee {
-                            display: flex;
-                            justify-content: flex-end;
-                            align-items: center;
-                            margin-top: 20px;
-                            font-weight: bold;
-                        }
-                        .total-price {
-                            display: flex;
-                            justify-content: flex-end; 
-                            align-items: center;
-                            margin-top: 20px;
-                            font-weight: bold;
-                        }
-                    }
-                }
-            }
+    <style>
+    .navbar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+    }
+    nav#menuItems ul li a:hover {
+        color: red;
+    }
 
-        }
-    </style> -->
+    nav#menuItems ul li a.active {
+        color: red;
+    }
+    .order-wrapper {
+        margin-top: 7rem;
+    }
+    .status {
+        position: fixed;
+        top: 6rem;
+        right: 0;
+        left: 0;
+        background: #d9d9d9;
+        padding: 10px;
+        border-top: 1px solid black;
+    }
+    .order {
+        margin-top: 5rem;
+    }
+    </style>
 </head>
 <body>
     <div class="navbar">
         <div class="logo">
-            <a href="http://localhost/E-commerce/customer_dash.php">
-                <img src="images/Logo.png" width="125">
-            </a>
+            <img src="images/Logo.png" width="125">
         </div>
         <nav id="menuItems">
             <ul>
@@ -202,10 +89,10 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <li><a href="products.php">Products</a></li>
                 <li><a href="my_orders.php">My Orders</a></li>
                 <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
-                <form method="post" action="search.php" class= "search">
+                <!-- <form method="post" action="search.php" class= "search">
                     <input type="search" class="form-control" name="keyword" value="<?php echo isset($_POST['keyword']) ? $_POST['keyword'] : '' ?>" placeholder="Search here..." required=""/>
                     <button type="submit" class="btn btn-success" name="search">Search</button>
-            </form>
+                </form> -->
                 <!-- <form class="search" method="GET" action="">
                     <input type="text" name="search" placeholder="Search products..." value="<?php echo $search; ?>">
                     <button type="submit">Search</button>
@@ -262,11 +149,10 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="order-details">
                 <div class="stats">
                     <div class="status">
-                    <a class="<?php echo ($status == 'pending') ? 'active' : ''; ?>" href="my_orders.php?status=pending">Pending</a> |
-                    <a class="<?php echo ($status == 'toship') ? 'active' : ''; ?>" href="my_orders.php?status=toship">To Ship</a> |
-                    <a class="<?php echo ($status == 'toreceive') ? 'active' : ''; ?>" href="my_orders.php?status=toreceive">To Receive</a> |
-                    <a class="<?php echo ($status == 'completed') ? 'active' : ''; ?>" href="my_orders.php?status=completed">Completed</a>
-
+                        <a class="<?php echo ($status == 'pending') ? 'active' : ''; ?>" href="my_orders.php?status=pending">Pending</a> |
+                        <a class="<?php echo ($status == 'toship') ? 'active' : ''; ?>" href="my_orders.php?status=toship">To Ship</a> |
+                        <a class="<?php echo ($status == 'toreceive') ? 'active' : ''; ?>" href="my_orders.php?status=toreceive">To Receive</a> |
+                        <a class="<?php echo ($status == 'completed') ? 'active' : ''; ?>" href="my_orders.php?status=completed">Completed</a>
                     </div>
 
                 </div>
@@ -275,7 +161,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php else : ?>
                 <?php
                     foreach ($orders as $order) {
-                        echo '<div class="order">';
+                    echo '<div class="order">';
                         echo "Date Ordered: " . $order['date_ordered'] . "<br>";
 
                         $stmt = $pdo->prepare("SELECT orders_details.*, products.prod_name, products.photo 
@@ -286,12 +172,24 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         $stmt->execute([$order['order_id']]);
                         $orderDetails = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         
-                        // Calculate the total price of the order
+                        // foreach ($orderDetails as $detail) {
+                        //     echo '<div class="order-item">';
+                        //     echo '<img src="images/upload/' . $detail['photo'] . '" alt="Product Photo">';
+                        //     echo '<div class="product-details">';
+                        //     echo '<div class="product-name">' . $detail['prod_name'] . ' <br> Qty: ' . $detail['quantity'] . '</div>';
+                        //     // echo '<div class="product-name">' . $detail['prod_name'] . '</div>';
+                        //     // echo '<div class="product-qty">Qty: ' . $detail['quantity'] . '</div>';
+                        //     echo '<div class="product-price">Price:  ₱' . $detail['price'] . '</div>';
+                        //     echo '</div>';
+                        //     echo '<div class="subtotal"> ₱' . ($detail['quantity'] * $detail['price']) . '</div>';
+                        //     echo '</div>';
+                        // }
+                        
                         $totalPrice = 0;
                         foreach ($orderDetails as $detail) {
                             $totalPrice += $detail['quantity'] * $detail['price'];
                         }
-
+                        
                         // Calculate delivery fee for this order
                         $deliveryFee = 0;
                         if ($order['delivery_option'] === 'delivery' && $totalPrice < 2000) {
@@ -300,7 +198,6 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                         // Calculate the total price including delivery fee for this order
                         $totalPrice += $deliveryFee;
-
 
                         foreach ($orderDetails as $detail) {
                             echo '<div class="order-item">';
@@ -312,17 +209,48 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             echo '<div class="subtotal"> ₱' . ($detail['quantity'] * $detail['price']) . '</div>';
                             echo '</div>';
                         }
+                        
                         // Display delivery fee
                         echo '<div class="delivery-fee" >Delivery Fee: ₱' . number_format($deliveryFee, 2) . '</div>';
                         echo '<div class="total-price">Total:  ₱' . number_format($totalPrice, 2) . '</div>'; 
                         
-                        if ($order['order_status'] === "To Receive") {
+                        if ($status === "toreceive") {
                             echo '<form action="order_received.php" method="post">';
                             echo '<input type="hidden" name="order_id" value="' . $order['order_id'] . '">';
                             echo '<button type="submit" name="order_received">Order Received</button>';
                             echo '</form>';
                         }
-                        echo '</div>'; 
+                        if ($order['order_status'] === "Completed") {
+                            // Check if rating and feedback exist
+                            $stmt = $pdo->prepare("SELECT * FROM ratings WHERE order_id = ?");
+                            $stmt->execute([$order['order_id']]);
+                            $ratingInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                            if ($ratingInfo) {
+                                // Display the rating and feedback
+                                echo '<div class="rating">';
+                                echo 'Rating: ' . $ratingInfo['rating_value'] . ' Stars<br>';
+                                echo 'Feedback: ' . htmlspecialchars($ratingInfo['feedback']) . '<br>';
+                                echo '</div>';
+                            } else {
+                                // Display a form to submit rating and feedback
+                                echo '<form action="submit_rating.php" method="post">';
+                                echo '<input type="hidden" name="order_id" value="' . $order['order_id'] . '">';
+                                echo '<label for="rating">Rating:</label>';
+                                echo '<select name="rating" id="rating">';
+                                echo '<option value="5">5 Stars</option>';
+                                echo '<option value="4">4 Stars</option>';
+                                echo '<option value="3">3 Stars</option>';
+                                echo '<option value="2">2 Stars</option>';
+                                echo '<option value="1">1 Star</option>';
+                                echo '</select>';
+                                echo '<label for="feedback">Feedback:</label>';
+                                echo '<textarea name="feedback" id="feedback" rows="4" cols="50"></textarea>';
+                                echo '<button type="submit" name="submit_rating">Submit Rating</button>';
+                                echo '</form>';
+                            }
+                        }
+                    echo '</div>'; 
                         
                         // echo "<hr>"; // Add a horizontal rule between orders
                     }
@@ -331,7 +259,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
         <?php endif; ?>     
     </div>
-    </div>
+</div>
     
     <!--footer-->
 

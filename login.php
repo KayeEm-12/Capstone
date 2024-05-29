@@ -34,10 +34,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         header("location: customer_dash.php");
                         break;
                     case 'Staff':
-                        header("location: staff_dash.php");  
+                        header("location: http://localhost/E-commerce/staff/staff_dash.php");  
                         break;
                     case 'Delivery_personnel':
-                        header("location: delivery_dash.php");  
+                        header("location: http://localhost/E-commerce/delivery-staff/delivery_dash.php");  
                         break;
                     default:
                       

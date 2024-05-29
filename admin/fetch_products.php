@@ -5,13 +5,17 @@ $category = $_POST['category'];
 
 try {
     if ($category == 0) {
-        $sql = "SELECT products.*, category.category_name
-                FROM products
-                INNER JOIN category ON products.category_id = category.category_id";
-    } else {
-        $sql = "SELECT products.*, category.category_name
+        $sql = "SELECT products.*, category.category_name, product_variations.discounted_price, 
+                product_variations.retail_price, product_variations.variation_type
                 FROM products
                 INNER JOIN category ON products.category_id = category.category_id
+                LEFT JOIN product_variations ON products.product_id = product_variations.product_id";
+    } else {
+        $sql = "SELECT products.*, category.category_name, product_variations.discounted_price, 
+                product_variations.retail_price, product_variations.variation_type
+                FROM products
+                INNER JOIN category ON products.category_id = category.category_id
+                LEFT JOIN product_variations ON products.product_id = product_variations.product_id
                 WHERE products.category_id = :category";
     }
 
@@ -32,12 +36,10 @@ try {
 
 <tr>
     <th>Product Name</th>
-    <!-- <th>Type Code</th> -->
+    <th>Variation Type</th>
     <th>Discounted Price</th>
     <th>Retail Price</th>
     <th>Description</th>
-    <!-- <th>Category</th>  -->
-    <!-- <th>Stock</th> -->
     <th>Photo</th>
     <th>Action</th>
 </tr>
@@ -46,6 +48,7 @@ try {
 foreach ($products as $product) {
     echo '<tr>';
     echo '<td>' . $product['prod_name'] . '</td>';
+    echo '<td>' . $product['variation_type'] . '</td>';
     echo '<td>' . $product['discounted_price'] . '</td>';
     echo '<td>' . $product['retail_price'] . '</td>';
     echo '<td>' . $product['prod_desc'] . '</td>';

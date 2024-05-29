@@ -7,11 +7,18 @@ if(isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
 
     try {
-        $sql = "SELECT cart.*, products.prod_name, products.discounted_price, products.retail_price, products.photo, products.stock, users.role 
-        FROM cart
-        INNER JOIN products ON cart.product_id = products.product_id
-        INNER JOIN users ON cart.user_id = users.user_id
-        WHERE cart.user_id = :user_id";
+        // $sql = "SELECT cart.*, products.prod_name, products.discounted_price, products.retail_price, products.photo, products.stock, users.role 
+        // FROM cart
+        // INNER JOIN products ON cart.product_id = products.product_id
+        // INNER JOIN users ON cart.user_id = users.user_id
+        // WHERE cart.user_id = :user_id";
+        $sql = "SELECT cart.*, products.prod_name, product_variations.discounted_price, 
+                product_variations.retail_price, products.photo, products.stock, users.role 
+                FROM cart
+                INNER JOIN products ON cart.product_id = products.product_id
+                INNER JOIN product_variations ON cart.product_id = product_variations.product_id
+                INNER JOIN users ON cart.user_id = users.user_id
+                WHERE cart.user_id = :user_id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['user_id' => $user_id]);
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);

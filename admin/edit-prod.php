@@ -5,7 +5,11 @@ if (isset($_GET['product_id']) && is_numeric($_GET['product_id'])) {
     $product_id = $_GET['product_id'];
 
     try {
-        $sql = "SELECT * FROM products WHERE product_id = :product_id";
+        // $sql = "SELECT * FROM products WHERE product_id = :product_id";
+        $sql = "SELECT p.*, pv.discounted_price, pv.retail_price 
+        FROM products p 
+        LEFT JOIN product_variations pv ON p.product_id = pv.product_id
+        WHERE p.product_id = :product_id";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
         $stmt->execute();
@@ -25,12 +29,31 @@ if (isset($_GET['product_id']) && is_numeric($_GET['product_id'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
+        // Retrieve form data
+        $newExpirationDate = $_POST['expiration_date'];
+        // Update the expiration date in the database
+        $sqlUpdate = "UPDATE products SET expiration_date = :expiration_date WHERE product_id = :product_id";
+        $stmtUpdate = $pdo->prepare($sqlUpdate);
+        $stmtUpdate->bindParam(':expiration_date', $newExpirationDate, PDO::PARAM_STR);
+        $stmtUpdate->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+        $stmtUpdate->execute();
+        // Redirect to products.php after updating
+        header("Location: products.php");
+        exit();
+    } catch (PDOException $e) {
+        die("PDOException: " . $e->getMessage());
+    } catch (Exception $e) {
+        die("Error: " . $e->getMessage());
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
         $newprod_name = $_POST['prod_name'];
         $newtype_code = $_POST['type_code'];
-        $newdiscounted_price = $_POST['discounted_price'];
-        $newretail_price = $_POST['retail_price'];
         $newprod_desc = $_POST['prod_desc'];
         $newstock = $_POST['stock'];
+
 
         if ($_FILES['photo']['error'] == UPLOAD_ERR_OK) {
             $uploadDir = '../images/upload/';
@@ -56,6 +79,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtUpdate->bindParam(':stock', $newstock, PDO::PARAM_STR);
         $stmtUpdate->bindParam(':product_id', $product_id, PDO::PARAM_INT);
         $stmtUpdate->execute();
+   Update the product details in the 'products' table
+            // $sqlUpdateProduct = "UPDATE products 
+            // SET prod_name = :prod_name, 
+            //     type_code = :type_code, 
+            //     prod_desc = :prod_desc, 
+            //     stock = :stock 
+            // WHERE product_id = :product_id";
+            //     $stmtUpdateProduct = $pdo->prepare($sqlUpdateProduct);
+            //     $stmtUpdateProduct->bindParam(':prod_name', $newprod_name, PDO::PARAM_STR);
+            //     $stmtUpdateProduct->bindParam(':type_code', $newtype_code, PDO::PARAM_STR);
+            //     $stmtUpdateProduct->bindParam(':prod_desc', $newprod_desc, PDO::PARAM_STR);
+            //     $stmtUpdateProduct->bindParam(':stock', $newstock, PDO::PARAM_STR);
+            //     $stmtUpdateProduct->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+            //     $stmtUpdateProduct->execute();
+
+            //     // Update the variation prices in the 'product_variations' table
+            //     $newdiscounted_price = $_POST['discounted_price'];
+            //     $newretail_price = $_POST['retail_price'];
+
+            //     $sqlUpdateVariations = "UPDATE product_variations 
+            //         SET discounted_price = :discounted_price,
+            //             retail_price = :retail_price
+            //         WHERE product_id = :product_id";
+            //     $stmtUpdateVariations = $pdo->prepare($sqlUpdateVariations);
+            //     $stmtUpdateVariations->bindParam(':discounted_price', $newdiscounted_price, PDO::PARAM_STR);
+            //     $stmtUpdateVariations->bindParam(':retail_price', $newretail_price, PDO::PARAM_STR);
+            //     $stmtUpdateVariations->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+            //     $stmtUpdateVariations->execute();
 
         header("Location: products.php");
         exit();
@@ -157,12 +208,13 @@ button :hover{
             <nav id="menuItems">
             <ul>
             <li><a href="http://localhost/E-commerce/admin/admin_dash.php">Dashboards</a></li>
-                <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
-                <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
-                <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
-                <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>
-                <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
-                <!-- <li><a href="http://localhost/E-commerce/Account.php">Account</a></li> -->
+            <li><a href="http://localhost/E-commerce/admin/reports.php">Reports</a></li>
+            <li><a href="http://localhost/E-commerce/admin/manage_order.php">Manage Orders</a></li>
+            <li><a href="http://localhost/E-commerce/admin/products.php">Manage Products</a></li>
+            <li><a href="http://localhost/E-commerce/admin/promo.php">Promo</a></li>
+            <li><a href="http://localhost/E-commerce/admin/category.php">Manage Categories</a></li>
+            <li><a href="http://localhost/E-commerce/admin/user.php">Manage Users</a></li>
+            <li><a href="http://localhost/E-commerce/admin/about.php">About</a></li>
             </ul>
             </nav>
             <div class="setting-sec">
@@ -205,6 +257,10 @@ button :hover{
     <div class="form-group">
         <label for="stock">Stock:</label>
         <input type="number" id="stock" name="stock" value="<?php echo $product['stock']; ?>"required><br>
+    </div>
+    <div class="form-group">
+        <label for="expiration_date">Expiration Date:</label>
+        <input type="date" id="expiration_date" name="expiration_date">
     </div>
     <div class="form-group">
         <label for="photo">Photo:</label>

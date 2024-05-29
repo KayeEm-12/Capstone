@@ -14,8 +14,13 @@ $start = ($page - 1) * $limit;
 
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 
-$stmt = $pdo->prepare("SELECT product_id, prod_name, discounted_price, retail_price, photo, stock FROM products WHERE products.prod_name LIKE :search
-LIMIT :start, :limit");
+$stmt = $pdo->prepare("SELECT products.product_id, products.prod_name, 
+                                product_variations.discounted_price, product_variations.retail_price, 
+                                products.photo, products.stock, product_variations.variation_type
+                        FROM products 
+                        LEFT JOIN product_variations ON products.product_id = product_variations.product_id 
+                        WHERE products.prod_name LIKE :search 
+                        LIMIT :start, :limit");
 $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
 $stmt->bindValue(':start', $start, PDO::PARAM_INT);
 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
@@ -310,9 +315,9 @@ if (isset($_GET['id'])) {
                             </a>
                         </h3>
                     <?php endif; ?>
-                        <p style="text-align: center; font-weight: bold;" >"Avail 3pcs above to get Discounted price"</p>
-                        <p>Discounted Price: ₱ <?php echo number_format($product['discounted_price'], 2); ?></p>
-                        <p>Regular Retail Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
+                        <!-- <p style="text-align: center; font-weight: bold;" >"Avail 3pcs above to get Discounted price"</p> -->
+                        <!-- <p>Discounted Price: ₱ <?php echo number_format($product['discounted_price'], 2); ?></p> -->
+                        <p>Price: ₱ <?php echo number_format($product['retail_price'], 2); ?></p>
                         <p>Stock: <?php echo number_format($product['stock']); ?></p>
                 </div>
             <?php endforeach; ?>

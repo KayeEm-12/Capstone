@@ -73,14 +73,21 @@ tr:nth-child(even) {
 tr:hover {
     background-color: #ddd;
 }
-button {
-    background-color: #f05d5d;
-    color: #080808;
-    padding: 5px 10px;
+.btn {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
-    font-weight: bold;
+    transition: background-color 0.3s;
+    margin-left: 40%;
+}
+.btn:hover {
+    background-color: #45a049;
 }
 .order-container {
     min-height: calc(100% - 256px);
@@ -198,6 +205,7 @@ button {
     
     <?php if (empty($orders)) : ?>
         <p style="text-align: center; margin-top: 20px;">No orders found for the selected status.</p>
+        <div style="text-align: center; margin-bottom: 20px;">
     <?php else : ?>
               
     <table>
@@ -206,39 +214,54 @@ button {
             <th>Name</th>
             <th>Date Ordered</th>
             <th>Total Price</th>
-            <th>Status</th>
-            <th>Date Receive</th>
+            <!-- <th>Status</th>
+            <th>Date Receive</th> -->
             <th>Action</th>
         </tr>
         <?php foreach ($orders as $order) : ?>
             <tr>
                 <td><?php echo $order['prod_name']; ?></td>
                 <td><?php echo $order['first_name'] . ' ' . $order['last_name']; ?></td>
-                <td><?php echo $order['date_ordered']; ?></td>
+                <!-- <td><?php echo $order['date_ordered']; ?></td> -->
+                <td>
+                    <?php 
+                        $dateOrdered = new DateTime($order['date_ordered']);
+                        echo $dateOrdered->format('F j, Y g:i a');
+                    ?>
+                </td>
                 <td><?php echo $order['total_price']; ?></td>
-                <td><?php echo $order['order_status']; ?></td>
+                <!-- <td><?php echo $order['order_status']; ?></td> -->
                 <!-- <td><?php echo $order['order_status'] == 'Completed' ? ($order['date_received'] ?? 'Not received yet') : ''; ?></td> -->
-                <td><?php echo $order['order_status'] == 'Completed' ? ($order['date_received'] ?? 'Not received yet') : 'Not received yet'; ?></td>
+                <!-- <td><?php echo $order['order_status'] == 'Completed' ? ($order['date_received'] ?? 'Not received yet') : 'Not received yet'; ?></td> -->
 
         <td>
             <form action="update_order.php" method="POST">
-                    <input type="hidden" name="user_id" value="<?php echo $order['user_id']; ?>">
-                    <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
-                    <select name="status">
+                <input type="hidden" name="user_id" value="<?php echo $order['user_id']; ?>">
+                <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
+                <select name="status">
+                    <?php if ($order['order_status'] == 'Pending') : ?>
                         <option value="Pending" <?php if ($order['order_status'] == 'Pending') echo 'selected'; ?>>Pending</option>
-                        <option value="ToShip" <?php if ($order['order_status'] == 'ToShip') echo 'selected'; ?>>To Ship</option>
-                        <option value="ToReceive" <?php if ($order['order_status'] == 'ToReceive') echo 'selected'; ?>>To Receive</option>
-                        <option value="Completed" <?php if ($order['order_status'] == 'Completed') echo 'selected'; ?>>Completed</option>
-                    </select>
+                        <option value="ToShip">To Ship</option>
+                        <option value="ToReceive">To Receive</option>
+                    <?php elseif ($order['order_status'] == 'ToShip') : ?>
+                        <option value="ToReceive">To Receive</option>
+                        <!-- <option value="Completed">Completed</option> -->
+                    <?php elseif ($order['order_status'] == 'ToReceive') : ?>
+                        <!-- <option value="Completed">Completed</option> -->
+                    <?php endif; ?>
+                </select>
+                <button type="submit" name="update_order">
+                <i class="fa-solid fa-save"></i>
+                    <!-- <i class="fa-solid fa-sync-alt"></i>  -->
+                </button>
+            </form>
 
-                    <button type="submit" name="update_order">Update</button>
-                </form>
             </td>
         </td>
             </tr>
         <?php endforeach; ?>
     </table>
-
+    <a href="generate_receipt.php?order_id=<?php echo $order_id; ?>" class="btn">Generate Receipt</a>
     <?php endif; ?>
 </div>
 <!--footer-->

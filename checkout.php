@@ -3,11 +3,35 @@
 require 'DB/db_con.php';
 require 'count-cart.php';
 
+// Function to fetch active promo
+function getBestPromo($pdo, $total) {
+    $currentDate = date('Y-m-d');
+    $sql = "SELECT * FROM promo WHERE start_date <= :currentDate AND end_date >= :currentDate ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindValue(':currentDate', $currentDate, PDO::PARAM_STR);
+    $stmt->execute();
+    $promos = $stmt -> fetchAll(PDO::FETCH_ASSOC);
+    
+    $bestPromo = null;
+    $maxDiscount = 0;
+
+    foreach($promos as $promo){
+        if ($total >= $promo['minimum_spend']){
+            $discount = $total * ($promo ['discount_percentage'] / 100);
+            if ($discount > $maxDiscount){
+                $maxDiscount= $discount;
+                $bestPromo = $promo;
+            }
+        }
+    }
+    return $bestPromo;
+}
+
 if (!isset($_SESSION['role'])){
     header("Location: login_form.php");
     exit();
 }
-// var_dump($_POST['selectedItems']);
+
 if(isset($_POST['selectedItems'])) {
     $selectedItems = $_POST['selectedItems'];
 
@@ -15,9 +39,15 @@ if(isset($_POST['selectedItems'])) {
     $total = 0;
 
     foreach ($selectedItems as $itemId) {
-        $stmt = $pdo->prepare("SELECT cart.*, products.prod_name, products.discounted_price, products.retail_price, products.photo 
+        // $stmt = $pdo->prepare("SELECT cart.*, products.prod_name, products.discounted_price, products.retail_price, products.photo 
+        //                         FROM cart 
+        //                         INNER JOIN products ON cart.product_id = products.product_id 
+        //                         WHERE cart.cart_id = :cart_id");
+        $stmt = $pdo->prepare("SELECT cart.*, products.prod_name, product_variations.discounted_price, 
+                                        product_variations.retail_price, products.photo 
                                 FROM cart 
                                 INNER JOIN products ON cart.product_id = products.product_id 
+                                INNER JOIN product_variations ON cart.product_id = product_variations.product_id 
                                 WHERE cart.cart_id = :cart_id");
         $stmt->execute(['cart_id' => $itemId]);
         $product = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -33,23 +63,20 @@ if(isset($_POST['selectedItems'])) {
             $selectedProducts[] = $product;
         }
     }
-    // Calculate delivery fee based on the total amount
-    // $deliveryFee = 0;
-    // if ($total < 2000) {
-    //     $deliveryFee = 50.00; 
-    // }
-    // $deliveryFee = 0;
-    // if (isset($_POST['pickupDelivery'])){
-    //     if ($_POST['pickupDelivery'] === 'delivery' && $total < 2000) {
-    //     $deliveryFee = 50.00;
-    // }
-
+    
+    $bestPromo = getBestPromo ($pdo, $total);
+    $promoDiscount= 0;
+    if ($bestPromo){
+        $promoDiscount =$total * ($bestPromo[ 'discount_percentage'] / 100);
+        $total -= $promoDiscount;
+    }
     $deliveryFee = 0;
     if (isset($_POST['pickupDelivery']) && $_POST['pickupDelivery'] === 'delivery' && $total < 2000) {
         $deliveryFee = 50.00;
     }
 
     $total += $deliveryFee;
+
 } else {
     header("Location: cart-view.php");
     exit();
@@ -73,16 +100,17 @@ table {
     width: 80%;
     border-collapse: collapse;
     margin: 20px auto;
+    border: 2px solid #656262;
 }
 th, td {
     padding: 10px;
-    border-bottom: 3px solid red;
-    border-top: 3px solid red;
+    /* border-bottom: 2px solid #656262;
+    border-top: 2px solid #656262; */
     text-align: Center;
     background-color: #cfcfcf;
 }
 button {
-    background-color: #ff4f00;
+    background-color: #cf9292;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -96,7 +124,7 @@ button {
     font-weight: bold;
 }
 button:hover {
-    background-color: #036dbd; 
+    background-color: #2ecc71; 
 }
 
 input[type="radio"] {
@@ -188,7 +216,10 @@ input[type="radio"]:checked {
                 <td colspan="4" style="text-align: right;"><strong>Delivery Fee:</strong></td>
                 <td id="deliveryFee"><?php echo number_format($deliveryFee, 2); ?></td>
             </tr>
-
+            <tr id="promoDiscountRow" style="display: <?php echo ($promoDiscount > 0) ? 'table-row' : 'none'; ?>;">
+                <td colspan="4" style="text-align: right;"><strong>Promo Discount:</strong></td>
+                <td id="promoDiscount"><?php echo number_format($promoDiscount, 2); ?></td>
+            </tr>
             <tr>
                 <td colspan="4" style="text-align: right;"><strong>Total:</strong></td>
                 <td id="total"><?php echo number_format($total, 2); ?></td>
