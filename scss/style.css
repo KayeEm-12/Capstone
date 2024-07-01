@@ -137,7 +137,6 @@ header .col-2 a.btn-shop {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  background: lightgrey;
   padding: 15px;
 }
 .category-head .category-dropdown {
@@ -152,7 +151,7 @@ header .col-2 a.btn-shop {
   /* border-radius: 10px; */
   padding: 4px;
   margin-bottom: 5px;
-  background: #ff4d01;
+  background: #cf9292;
   margin-left: 10px;
 }
 .category-head form input#search-input #search-input::-moz-placeholder {
@@ -170,7 +169,7 @@ header .col-2 a.btn-shop {
   padding: 2px;
 }
 .category-head form button {
-  background-color: #f05d5d;
+  background-color: #cf9292;
   color: #080808;
   padding: 5px 10px;
   border: none;
@@ -314,9 +313,9 @@ header .col-2 a.btn-shop {
   margin: 0 4px;
 }
 .productList #categoryItems .pagination a.active {
-  background-color: #f05d5d;
+  background-color: #cf9292;
   color: white;
-  border: 1px solid #000;
+  border: 1px solid #612727;
 }
 .productList #categoryItems .pagination a:hover:not(.active) {
   background-color: #ddd;
@@ -552,7 +551,7 @@ footer .container .row .footer-col-2 p {
   margin-bottom: 10px;
   padding: 50px;
   border: 2px solid gray;
-  box-shadow: #555;
+  box-shadow: 0px 0px 5px #555;
 }
 .order-wrapper .order-container .order-details .order .order-item {
   display: flex;
@@ -569,6 +568,9 @@ footer .container .row .footer-col-2 p {
 }
 .order-wrapper .order-container .order-details .order .order-item .product-details .product-name {
   font-weight: bold;
+}
+.order-wrapper .order-container .order-details .order .order-item .product-details .product-price {
+  margin-left: 100px;
 }
 .order-wrapper .order-container .order-details .order .order-item .subtotal {
   margin-left: auto;
@@ -619,7 +621,7 @@ footer .container .row .footer-col-2 p {
   display: flex;
 }
 .cart-wrapper form button#checkout-btn {
-  background-color: #ff4f00;
+  background-color: #cf9292;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -633,7 +635,7 @@ footer .container .row .footer-col-2 p {
   font-weight: bold;
 }
 .cart-wrapper form button#checkout-btn:hover {
-  background-color: #036dbd;
+  background-color: #2ecc71;
 }
 
 .prod-container .product-item {

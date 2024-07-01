@@ -163,18 +163,9 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
     </div>
 </div>
 <!--footer-->
-<footer>
-    <div class="container">
-        <div class="row">
-            <div class="footer-col-1">
-            <img src="images/logo2.png" width="100px" height="60px">
-            </div>
-            <div class="footer-col-2">
-            <p>&copy; <?php echo date('Y'); ?> 4M Minimart Online Store. All rights reserved.</p>
-            </div>
-        </div>
-    </div>
-    </footer>
+<?php
+    include('footer.php');
+?> 
 <!-- js for toggle menu -->
 <script>
     var menuItems = document.getElementById("menuItems");
